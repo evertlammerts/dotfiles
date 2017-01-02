@@ -1,5 +1,6 @@
 call plug#begin()
 
+" Golang
 Plug 'fatih/vim-go'
 Plug 'Shougo/deoplete.nvim'
 Plug 'zchee/deoplete-go', { 'do': 'make'}
@@ -8,6 +9,9 @@ Plug 'SirVer/ultisnips'
 Plug 'fatih/molokai'
 Plug 'tpope/vim-dispatch'
 Plug 'elzr/vim-json', {'for' : 'json'}
+
+" Rust
+Plug 'rust-lang/rust.vim'
 
 call plug#end()
 
@@ -62,3 +66,8 @@ function! s:build_go_files()
 endfunction
 autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
 
+" Tabs!
+set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
+
+" Python3 !
+let g:python3_host_prog = '/Users/evert/.pyenv/shims/python3.5'
