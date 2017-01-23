@@ -15,4 +15,6 @@ export HISTFILESIZE=10000
 _git_completion='/usr/local/etc/bash_completion.d/git-completion.bash'
 test -s ${_git_completion} && . ${_git_completion} || true
 
+# Only allow pip install in a virtualenv
+export PIP_REQUIRE_VIRTUALENV=true
 
