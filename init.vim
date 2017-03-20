@@ -70,4 +70,4 @@ autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
 set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
 
 " Python3 !
-let g:python3_host_prog = '/Users/evert/.pyenv/shims/python3.5'
+let g:python3_host_prog = '/usr/local/bin/python3.6'

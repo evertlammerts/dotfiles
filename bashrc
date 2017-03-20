@@ -1,3 +1,7 @@
+# create a python 3.6 venv as .venv in the current directoy, with the promptname being the current dir's name
+venv() {
+  python3.6 -c "import venv; venv.EnvBuilder(with_pip=True, prompt='$(basename $(pwd))').create('$(pwd)/.venv')"
+}
 
 # Always use nvim
 export EDITOR="`which nvim`"
