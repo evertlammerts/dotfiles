@@ -9,6 +9,7 @@ Plug 'SirVer/ultisnips'
 Plug 'fatih/molokai'
 Plug 'tpope/vim-dispatch'
 Plug 'elzr/vim-json', {'for' : 'json'}
+Plug 'ctrlpvim/ctrlp.vim'
 
 " Rust
 Plug 'rust-lang/rust.vim'
@@ -50,6 +51,9 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
+map <F8> :TagbarToggle<CR>
+inoremap <C-Space> <C-x><C-o>
+inoremap <C-@> <C-Space>
 
 " shortcuts for :GoRun :GoTest :GoCoverageToggle
 autocmd FileType go nmap <leader>r  <Plug>(go-run)
@@ -69,5 +73,11 @@ autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
 " Tabs!
 set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
 
+" gofmt to goimports
+let g:go_fmt_command = "goimports"
+
 " Python3 !
 let g:python3_host_prog = '/usr/local/bin/python3.6'
+
+" deoplete
+let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
