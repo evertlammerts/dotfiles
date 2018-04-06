@@ -12,6 +12,6 @@ venv() {
   [ -e .venv ] ||
     python3.6 -m venv --prompt "`basename "$PWD"`" .venv
   ACTIVATE='.venv/bin/activate'
-  [ -e "$ACTIVATE" ] && . "$ACTIVATE" || echo "File not found: $ACTIVATE" >&2
+  [ -e "$ACTIVATE" ] && . "$ACTIVATE" && pip install --upgrade setuptools || echo "File not found: $ACTIVATE" >&2
 }
 
