@@ -14,6 +14,9 @@ Plug 'ctrlpvim/ctrlp.vim'
 " Rust
 Plug 'rust-lang/rust.vim'
 
+" Fuzzy Finder (fzf)
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
 call plug#end()
 
 set noerrorbells             " No beeps

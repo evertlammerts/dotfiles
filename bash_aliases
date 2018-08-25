@@ -11,12 +11,19 @@ newpwd() {
   LC_ALL=C tr -dc 'a-zA-Z0-9' < /dev/urandom | fold -w $len | head -n 1
 }
 
-# create a python 3.6 venv as .venv in the current directoy, with the promptname being the current dir's name
-venv() {
+# create a python 3.7 venv as .venv in the current directoy, with the promptname being the current dir's name
+venv37() {
   [ -z "$VIRTUAL_ENV" ] || deactivate
   [ -e .venv ] ||
-    python3.6 -m venv --prompt "`basename "$PWD"`" .venv
+    python3.7 -m venv --prompt "`basename "$PWD"`" .venv
   ACTIVATE='.venv/bin/activate'
   [ -e "$ACTIVATE" ] && . "$ACTIVATE" && pip install --upgrade setuptools || echo "File not found: $ACTIVATE" >&2
 }
 
+venv27() {
+  [ -z "$VIRTUAL_ENV" ] || deactivate
+  [ -e .venv ] ||
+    virtualenv --prompt "(`basename "$PWD"`)" .venv
+  ACTIVATE='.venv/bin/activate'
+  [ -e "$ACTIVATE" ] && . "$ACTIVATE" || echo "File not found : $ACTIVATE" >&2
+}

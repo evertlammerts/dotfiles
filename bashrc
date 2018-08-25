@@ -17,3 +17,7 @@ test -s ${_git_completion} && . ${_git_completion} || true
 # Exclude .venv from grep
 export GREP_OPTIONS='--exclude-dir=.venv'
 
+
+[ -s "/Users/evert/.jabba/jabba.sh" ] && source "/Users/evert/.jabba/jabba.sh"
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
