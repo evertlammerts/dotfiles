@@ -5,6 +5,7 @@ alias vi='nvim'
 alias show_hidden_files='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
 alias hide_hidden_files='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 alias code='/Applications/Visual\ Studio\ Code.app/Contents/MacOS/Electron'
+alias atom='/Applications/Atom.app/Contents/MacOS/Atom'
 
 newpwd() {
   len=${1:-12}
