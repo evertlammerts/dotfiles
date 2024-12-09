@@ -1,0 +1,20 @@
+alias ll='ls -lahtr'
+alias git=hub
+alias vim='nvim'
+alias vi='nvim'
+alias code='open -a Visual\ Studio\ Code'
+
+newpwd() {
+  len=${1:-12}
+  LC_ALL=C tr -dc 'a-zA-Z0-9' < /dev/urandom | fold -w $len | head -n 1
+}
+
+# create a python 3.7 venv as .venv in the current directoy, with the promptname being the current dir's name
+venv() {
+  [ -z "$VIRTUAL_ENV" ] || deactivate
+  [ -e .venv ] ||
+    python3 -m venv --prompt "`basename "$PWD"`" .venv
+  ACTIVATE='.venv/bin/activate'
+  [ -e "$ACTIVATE" ] && . "$ACTIVATE" && pip install --upgrade setuptools || echo "File not found: $ACTIVATE" >&2
+}
+
