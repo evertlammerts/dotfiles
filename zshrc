@@ -3,7 +3,7 @@ export EDITOR="`which nvim`"
 # Defaults for less
 export LESS="--raw-control-chars --ignore-case"
 # Source aliases if we have them
-test -s "${HOME}/.bash_aliases" && . "${HOME}/.bash_aliases" || true
+test -s "${HOME}/.aliases" && . "${HOME}/.aliases" || true
 
 # History control
 export HISTCONTROL=erasedups
@@ -17,7 +17,4 @@ test -s ${_git_completion} && . ${_git_completion} || true
 # Exclude .venv from grep
 export GREP_OPTIONS='--exclude-dir=.venv'
 
-
-[ -s "/Users/evert/.jabba/jabba.sh" ] && source "/Users/evert/.jabba/jabba.sh"
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+source ~/.aliases
