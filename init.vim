@@ -80,7 +80,7 @@ set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
 let g:go_fmt_command = "goimports"
 
 " Python3 !
-let g:python3_host_prog = '/usr/local/bin/python3.6'
+let g:python3_host_prog = '/opt/homebrew/bin/python3'
 
 " deoplete
 let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'

@@ -1,14 +1,29 @@
-all: setup
+CONFIG_DIRS = ~/.config/nvim/colors ~/.local/share/nvim/site/autoload ~/.ssh ~/.config/git
+
+all: directories setup symlinks
+
+directories:
+	mkdir -p $(CONFIG_DIRS)
+
+symlinks:
 	[ -f ~/.config/nvim/init.vim ] || ln -s $(PWD)/init.vim ~/.config/nvim/init.vim
 	[ -f ~/.zshrc ] || ln -s $(PWD)/zshrc ~/.zshrc
 	[ -f ~/.aliases ] || ln -s $(PWD)/aliases ~/.aliases
+	[ -f ~/.gitconfig ] || ln -s $(PWD)/gitconfig ~/.gitconfig
 	[ -f ~/.gitignore_global ] || ln -s $(PWD)/gitignore_global ~/.gitignore_global
-
+	[ -f ~/.tmux.conf ] || ln -s $(PWD)/tmux.conf ~/.tmux.conf
+	[ -f ~/.ssh/config ] || ln -s $(PWD)/ssh_config ~/.ssh/config
 
 clean:
-	[ -f ~/.config/nvim/init.vim ] && rm ~/.config/nvim/init.vim
+	-rm -f ~/.config/nvim/init.vim
+	-rm -f ~/.zshrc
+	-rm -f ~/.aliases
+	-rm -f ~/.gitconfig
+	-rm -f ~/.gitignore_global
+	-rm -f ~/.tmux.conf
+	-rm -f ~/.ssh/config
 
 setup:
-	/bin/bash $(PWD)/setup.sh
+	/bin/zsh $(PWD)/setup.sh
 
-.PHONY: all
+.PHONY: all directories symlinks clean setup
