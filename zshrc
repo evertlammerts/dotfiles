@@ -1,4 +1,9 @@
 # Path to Oh My Zsh installation
+
+# Set up locale
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+
 export ZSH="$HOME/.oh-my-zsh"
 
 # Oh My Zsh theme (using Starship instead)
@@ -26,6 +31,13 @@ source $ZSH/oh-my-zsh.sh
 # Editor configuration
 export EDITOR="`which nvim`"
 
+# Tool-specific configurations
+export BAT_THEME="Dracula"
+export JQ_COLORS="1;31:0;37:0;37:0;37:0;32:1;37:1;37"
+export TLDR_LANGUAGE="en"
+export TLDR_CACHE_ENABLED=1
+export TLDR_CACHE_MAX_AGE=720
+
 # History settings
 export HISTSIZE=10000
 export HISTFILESIZE=10000
@@ -42,53 +54,24 @@ export LESSHISTFILE="-"
 export PATH="$PATH:/Users/evert/.cache/lm-studio/bin"
 export PATH="$HOME/.local/bin:$PATH"
 
-# Tool configurations and aliases
-# Modern CLI tool replacements
-alias cat="bat"
-alias ls="lsd"
-alias ll="lsd -l"
-alias la="lsd -la"
-alias lt="lsd --tree"
-alias grep="rg"
-export GREP_OPTIONS='--exclude-dir=.venv'
-
 # FZF Configuration
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --preview 'bat --color=always --style=numbers --line-range=:500 {}'"
 export FZF_DEFAULT_COMMAND='fd --type f --follow --hidden --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type d --hidden --follow --exclude .git"
+export FZF_ALT_C_OPTS="--preview 'lsd --tree {} | head -50'"
 bindkey '^T' fzf-file-widget
 bindkey '^R' fzf-history-widget
 
-# File Management Tools
-alias find='fd'
-alias du='duf'
-alias disk='ncdu'
+# JSON/YAML/CSV functions
+function jsonview() { cat "$1" | jq -C '.' | less -R }
+function yamlview() { cat "$1" | yq -p=yaml -o=json | jq -C '.' | less -R }
+function csvview() { xsv table "$1" | less -S }
 
-# Data Processing Tools
-alias json='jq'
-alias yaml='yq'
-alias csv='xsv'
-
-# Network Tools
-alias curl='http'
-alias trace='sudo mtr'
-alias netmon='sudo bandwhich'
-alias nettop='sudo bandwhich --show-ios'
-
-# File Management Tools
-alias find='fd'
-alias du='duf'
-alias disk='ncdu'
-
-# Data Processing Tools
-alias json='jq'
-alias yaml='yq'
-alias csv='xsv'
-
-# System Monitoring
-alias top='btop'
-alias help='tldr'
-
+# Network monitoring functions
+function port() { sudo lsof -i ":$1" }
+function listen() { sudo lsof -iTCP -sTCP:LISTEN -P }
 # Load aliases
 test -s "${HOME}/.aliases" && . "${HOME}/.aliases" || true
 
@@ -98,6 +81,9 @@ compinit
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' accept-exact '*(N)'
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
 
 # Initialize Starship prompt
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

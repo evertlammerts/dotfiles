@@ -1,5 +1,49 @@
-alias ll='ls -lahtr'
-alias git=hub
+# Modern CLI replacements
+alias ls='lsd'
+alias ll='lsd -la'
+alias lt='lsd --tree'
+alias tree='lsd --tree'
+
+# File viewing
+alias cat='bat'
+alias less='bat --style=plain --paging=always'
+alias preview='bat --style=numbers,changes'
+
+# Editor
+alias vim='nvim'
+alias vi='nvim'
+alias code='open -a Visual\ Studio\ Code'
+
+# Search and find
+alias grep='rg --smart-case'
+alias find='fd --hidden --follow --exclude .git'
+
+# Data processing
+alias json='jq -C'
+alias yaml='yq -C'
+alias csv='xsv'
+alias jsonf='jq -C . | less -R'
+alias yamlf='yq -C . | less -R'
+alias csvt='xsv table'
+
+# Disk usage
+alias du='duf'
+alias disk='ncdu --color dark'
+alias space='duf --sort size'
+
+# System monitoring
+alias top='btop'
+alias help='tldr'
+
+# Network tools
+alias http='http --style=auto'
+alias https='http --default-scheme=https'
+alias trace='sudo mtr --show-ips --curses'
+alias tracet='sudo mtr --show-ips --curses --tcp'
+alias netmon='sudo bandwhich'
+alias nettop='sudo bandwhich --show-ios'
+alias netcon='sudo bandwhich --connections'
+alias ports='sudo lsof -iTCP -sTCP:LISTEN -P -n'
 alias vim='nvim'
 alias vi='nvim'
 alias code='open -a Visual\ Studio\ Code'

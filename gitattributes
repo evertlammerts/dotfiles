@@ -1,0 +1,94 @@
+# Default behavior: normalize line endings for all text files
+* text=auto eol=lf
+
+# Git files
+.gitattributes text diff=text
+.gitignore text diff=text
+.gitconfig text diff=text
+
+# Scripts
+*.bash text diff=bash
+*.sh text diff=bash
+*.zsh text diff=bash
+*.fish text diff=fish
+*.py text diff=python
+*.pl text diff=perl
+*.rb text diff=ruby
+*.js text diff=javascript
+*.ts text diff=typescript
+*.php text diff=php
+*.java text diff=java
+*.go text diff=golang
+
+# Documentation and configuration
+*.md text diff=markdown
+*.rst text diff=rst
+*.txt text diff=text
+*.yml text diff=yaml
+*.yaml text diff=yaml
+*.json text diff=json
+*.xml text diff=xml
+*.toml text diff=toml
+*.ini text diff=text
+*.conf text diff=text
+
+# Web files
+*.htm text diff=html
+*.html text diff=html
+*.css text diff=css
+*.scss text diff=css
+*.sass text diff=css
+*.less text diff=css
+*.jsx text diff=javascript
+*.tsx text diff=typescript
+*.vue text diff=vue
+
+# Docker
+Dockerfile text diff=dockerfile
+docker-compose.yml text diff=yaml
+
+# Common binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text
+*.eps binary
+*.pdf binary
+
+# Audio/Video
+*.mp3 binary
+*.mp4 binary
+*.wav binary
+*.flac binary
+*.mov binary
+*.avi binary
+
+# Fonts
+*.ttf binary
+*.eot binary
+*.woff binary
+*.woff2 binary
+*.otf binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.7z binary
+*.rar binary
+
+# Language-specific binary files
+*.pyc binary
+*.class binary
+*.dll binary
+*.exe binary
+*.so binary
+*.dylib binary
+
+# IDE and editor files
+*.swp binary
+.DS_Store binary
+Thumbs.db binary
+
