@@ -1,64 +1,76 @@
 # Modern CLI replacements
+# Modern replacement for ls with icons and colors
 alias ls='lsd'
+# List all files in long format with icons
 alias ll='lsd -la'
+# Show directory structure as a tree with icons
 alias lt='lsd --tree'
+# Alias tree to lsd tree view for consistency
 alias tree='lsd --tree'
 
 # File viewing
+# Modern replacement for cat with syntax highlighting
 alias cat='bat'
+# Enhanced pager with syntax highlighting
 alias less='bat --style=plain --paging=always'
+# Preview files with line numbers and Git changes
 alias preview='bat --style=numbers,changes'
 
 # Editor
+# Use neovim as the default vim editor
 alias vim='nvim'
+# Map vi to neovim as well
 alias vi='nvim'
+# Open Visual Studio Code from terminal
 alias code='open -a Visual\ Studio\ Code'
 
 # Search and find
+# Use ripgrep with smart case sensitivity
 alias grep='rg --smart-case'
+# Modern find replacement that respects gitignore
 alias find='fd --hidden --follow --exclude .git'
 
 # Data processing
+# Pretty print JSON with colors
 alias json='jq -C'
+# Pretty print YAML with colors
 alias yaml='yq -C'
+# CSV file manipulation tool
 alias csv='xsv'
-alias jsonf='jq -C . | less -R'
-alias yamlf='yq -C . | less -R'
+# Pretty print and page through JSON files with colors
+alias jsonf='jq -C . | bat --style=plain --paging=always'
+# Pretty print and page through YAML files with colors
+alias yamlf='yq -C . | bat --style=plain --paging=always'
+# Display CSV files in table format
 alias csvt='xsv table'
 
 # Disk usage
+# Modern disk usage utility with better UI
 alias du='duf'
+# Interactive disk usage analyzer
 alias disk='ncdu --color dark'
+# Show disk usage sorted by size
 alias space='duf --sort size'
 
 # System monitoring
+# Modern system monitor with detailed stats
 alias top='btop'
+# Simplified man pages with practical examples
 alias help='tldr'
 
 # Network tools
+# HTTPie with auto-formatting
 alias http='http --style=auto'
+# HTTPie with HTTPS as default scheme
 alias https='http --default-scheme=https'
-alias trace='sudo mtr --show-ips --curses'
+# Traceroute with real-time updates
+alias trace='sudo m# Monitor network traffic in real-time (all interfaces)
+alias nettop='sudo bandwhich'
+aceroute
 alias tracet='sudo mtr --show-ips --curses --tcp'
+# Monitor network bandwidth usage
 alias netmon='sudo bandwhich'
-alias nettop='sudo bandwhich --show-ios'
+# Show active network connections
 alias netcon='sudo bandwhich --connections'
+# List all listening TCP ports
 alias ports='sudo lsof -iTCP -sTCP:LISTEN -P -n'
-alias vim='nvim'
-alias vi='nvim'
-alias code='open -a Visual\ Studio\ Code'
-
-newpwd() {
-  len=${1:-12}
-  LC_ALL=C tr -dc 'a-zA-Z0-9' < /dev/urandom | fold -w $len | head -n 1
-}
-
-# create a python 3.7 venv as .venv in the current directoy, with the promptname being the current dir's name
-venv() {
-  [ -z "$VIRTUAL_ENV" ] || deactivate
-  [ -e .venv ] ||
-    python3 -m venv --prompt "`basename "$PWD"`" .venv
-  ACTIVATE='.venv/bin/activate'
-  [ -e "$ACTIVATE" ] && . "$ACTIVATE" && pip install --upgrade setuptools || echo "File not found: $ACTIVATE" >&2
-}
-
