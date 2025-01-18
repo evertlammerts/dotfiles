@@ -200,6 +200,24 @@ setup_zsh() {
 # Set up Neovim
 setup_neovim() {
     log "Setting up Neovim..."
+
+    # Create Python virtual environment for neovim
+    local venv_path="$HOME/.config/nvim/venv/neovim"
+    if [ ! -d "$venv_path" ]; then
+        log "Creating Python virtual environment for neovim..."
+        if ! python3 -m venv "$venv_path"; then
+            error "Failed to create Python virtual environment for neovim"
+            return
+        fi
+    fi
+
+    # Install pynvim in the virtual environment
+    log "Installing pynvim in virtual environment..."
+    if ! "$venv_path/bin/pip" install --upgrade pip pynvim; then
+        error "Failed to install pynvim in virtual environment"
+        return
+    fi
+
     # molokai color scheme
     if ! curl -fLo "$HOME/.config/nvim/colors/molokai.vim" --create-dirs \
         https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim; then
