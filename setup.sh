@@ -35,20 +35,70 @@ install_homebrew() {
 # Install essential tools
 install_tools() {
     log "Installing command line tools..."
-    brew install \
-        neovim \
-        gh \
-        bat \
-        ripgrep \
-        exa \
-        starship \
-        zsh-autosuggestions \
-        zsh-syntax-highlighting \
-        tmux \
-        git-delta || error "Failed to install tools"
+    
+    # Define tools and their descriptions in parallel arrays
+    tools=(
+        neovim
+        gh
+        bat
+        ripgrep
+        exa
+        starship
+        zsh-autosuggestions
+        zsh-syntax-highlighting
+        tmux
+        git-delta
+    )
+    
+    descriptions=(
+        "Text editor"
+        "GitHub CLI"
+        "Cat clone with syntax highlighting"
+        "Fast search tool"
+        "Modern ls replacement"
+        "Shell prompt"
+        "ZSH autosuggestions"
+        "ZSH syntax highlighting"
+        "Terminal multiplexer"
+        "Better diff viewer"
+    )
+    
+    failed_installs=()
+    
+    for i in $(seq 1 ${#tools[@]}); do
+        tool=${tools[$i-1]}
+        description=${descriptions[$i-1]}
+        
+        if ! brew list "$tool" &>/dev/null; then
+            log "Installing ${tool} (${description})..."
+            if ! brew install "$tool" &>/dev/null; then
+                log "WARNING: Failed to install ${tool}"
+                failed_installs+=($tool)
+            fi
+        else
+            log "${tool} is already installed, skipping..."
+        fi
+    done
 
     # Remove hub if installed (replacing with gh)
-    brew uninstall hub 2>/dev/null || true
+    if brew list hub &>/dev/null; then
+        log "Removing hub in favor of gh..."
+        brew uninstall hub 2>/dev/null || true
+    fi
+
+    # Report any failures at the end
+    if [ ${#failed_installs[@]} -gt 0 ]; then
+        log "WARNING: The following tools failed to install:"
+        for tool in ${failed_installs[@]}; do
+            # Find the description for the failed tool
+            for i in $(seq 1 ${#tools[@]}); do
+                if [ "$tool" = "${tools[$i-1]}" ]; then
+                    log "  - $tool (${descriptions[$i-1]})"
+                    break
+                fi
+            done
+        done
+    fi
 }
 
 # Install and configure Oh My Zsh
