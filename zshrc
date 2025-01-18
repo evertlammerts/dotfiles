@@ -6,16 +6,18 @@ ZSH_THEME=""
 
 # Oh My Zsh plugins
 plugins=(
-git
-docker
-python
-pip
-macos
-brew
-kubectl
-history
-dirhistory
-z
+    git
+    docker
+    python
+    pip
+    macos
+    brew
+    kubectl
+    history
+    dirhistory
+    z
+    colored-man-pages
+    command-not-found
 )
 
 # Load Oh My Zsh
@@ -32,24 +34,35 @@ setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_SAVE_NO_DUPS
 
 # Less configuration
-export LESS="--raw-control-chars --ignore-case"
+# Less configuration
+export LESS="--raw-control-chars --ignore-case --status-column"
+export LESSHISTFILE="-"
 
 # Path configurations
 export PATH="$PATH:/Users/evert/.cache/lm-studio/bin"
 export PATH="$HOME/.local/bin:$PATH"
 
-# Tool configurations
+# Tool configurations and aliases
+# Modern CLI tool replacements
 alias cat="bat"
-alias ls="exa"
-alias ll="exa -l"
-alias la="exa -la"
+alias ls="lsd"
+alias ll="lsd -l"
+alias la="lsd -la"
+alias lt="lsd --tree"
 alias grep="rg"
 export GREP_OPTIONS='--exclude-dir=.venv'
 
 # Load aliases
 test -s "${HOME}/.aliases" && . "${HOME}/.aliases" || true
 
-# Load syntax highlighting and autosuggestions
+# Completions configuration
+autoload -Uz compinit
+compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# Initialize Starship prompt
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 

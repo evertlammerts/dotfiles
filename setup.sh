@@ -42,7 +42,7 @@ install_tools() {
         gh
         bat
         ripgrep
-        exa
+        lsd
         starship
         zsh-autosuggestions
         zsh-syntax-highlighting
@@ -55,7 +55,7 @@ install_tools() {
         "GitHub CLI"
         "Cat clone with syntax highlighting"
         "Fast search tool"
-        "Modern ls replacement"
+        "Modern ls replacement with icons"
         "Shell prompt"
         "ZSH autosuggestions"
         "ZSH syntax highlighting"
@@ -65,13 +65,13 @@ install_tools() {
     
     failed_installs=()
     
-    for i in $(seq 1 ${#tools[@]}); do
-        tool=${tools[$i-1]}
-        description=${descriptions[$i-1]}
+    for i in {1..$#tools}; do
+        tool=$tools[i]
+        description=$descriptions[i]
         
         if ! brew list "$tool" &>/dev/null; then
             log "Installing ${tool} (${description})..."
-            if ! brew install "$tool" &>/dev/null; then
+            if ! brew install "$tool"; then
                 log "WARNING: Failed to install ${tool}"
                 failed_installs+=($tool)
             fi
