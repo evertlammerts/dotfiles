@@ -48,8 +48,23 @@ install_tools() {
         zsh-syntax-highlighting
         tmux
         git-delta
+        # File management tools
+        fd
+        duf
+        ncdu
+        # Data processing tools
+        jq
+        yq
+        xsv
+        # System monitoring
+        btop\
+        tldr\
+        # Network tools
+        httpie
+        mtr
+        bandwhich
     )
-    
+
     descriptions=(
         "Text editor"
         "GitHub CLI"
@@ -61,6 +76,21 @@ install_tools() {
         "ZSH syntax highlighting"
         "Terminal multiplexer"
         "Better diff viewer"
+        # File management tools
+        "User-friendly find alternative"
+        "Better disk usage viewer"
+        "NCurses disk usage analyzer"
+        # Data processing tools
+        "JSON processor"
+        "YAML processor"
+        "CSV toolkit"
+        # System monitoring
+        "Process/system monitor"\
+        "Simplified man pages"\
+        # Network tools
+        "Modern HTTP client"
+        "Network diagnostic tool"
+        "Network usage monitor"
     )
     
     failed_installs=()

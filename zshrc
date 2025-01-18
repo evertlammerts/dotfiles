@@ -52,6 +52,43 @@ alias lt="lsd --tree"
 alias grep="rg"
 export GREP_OPTIONS='--exclude-dir=.venv'
 
+# FZF Configuration
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --preview 'bat --color=always --style=numbers --line-range=:500 {}'"
+export FZF_DEFAULT_COMMAND='fd --type f --follow --hidden --exclude .git'
+bindkey '^T' fzf-file-widget
+bindkey '^R' fzf-history-widget
+
+# File Management Tools
+alias find='fd'
+alias du='duf'
+alias disk='ncdu'
+
+# Data Processing Tools
+alias json='jq'
+alias yaml='yq'
+alias csv='xsv'
+
+# Network Tools
+alias curl='http'
+alias trace='sudo mtr'
+alias netmon='sudo bandwhich'
+alias nettop='sudo bandwhich --show-ios'
+
+# File Management Tools
+alias find='fd'
+alias du='duf'
+alias disk='ncdu'
+
+# Data Processing Tools
+alias json='jq'
+alias yaml='yq'
+alias csv='xsv'
+
+# System Monitoring
+alias top='btop'
+alias help='tldr'
+
 # Load aliases
 test -s "${HOME}/.aliases" && . "${HOME}/.aliases" || true
 
