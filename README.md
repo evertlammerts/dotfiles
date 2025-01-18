@@ -157,7 +157,4 @@ Recommended backup practices:
 
 MIT
 
-## 🙏 Acknowledgments
-
-This configuration is inspired by the dotfiles community and refined through personal use and iteration.
 
