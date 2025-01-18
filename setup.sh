@@ -19,8 +19,9 @@ setup_directories() {
     log "Creating necessary directories..."
     mkdir -p ~/.config/nvim/colors \
             ~/.local/share/nvim/site/autoload \
-            ~/.ssh
-    chmod 700 ~/.ssh
+            ~/.ssh \
+            ~/.ssh/control
+    chmod 700 ~/.ssh ~/.ssh/control
 }
 
 # Install Homebrew if not present
