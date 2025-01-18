@@ -38,9 +38,44 @@ alias yaml='yq -C'
 # CSV file manipulation tool
 alias csv='xsv'
 # Pretty print and page through JSON files with colors
-alias jsonf='jq -C . | bat --style=plain --paging=always'
+# Usage: jsonf [file] [jq filter] OR cat file.json | jsonf [jq filter]
+unalias jsonf 2>/dev/null || true
+jsonf() {
+    if [ -p /dev/stdin ]; then
+        # If input is being piped
+        cat - | jq -C "${@:-.}" | bat --style=plain --paging=always
+    elif [ $# -eq 0 ]; then
+        # If no arguments provided
+        echo "Usage: jsonf [file] [jq filter]" >&2
+        return 1
+    elif [ $# -eq 1 ]; then
+        # If only one argument, treat as file with default filter
+        cat "$1" | jq -C . | bat --style=plain --paging=always
+    else
+        # If file and filter provided
+        cat "$1" | jq -C "${@:2}" | bat --style=plain --paging=always
+    fi
+}
+
 # Pretty print and page through YAML files with colors
-alias yamlf='yq -C . | bat --style=plain --paging=always'
+# Usage: yamlf [file] [yq filter] OR cat file.yaml | yamlf [yq filter]
+unalias yamlf 2>/dev/null || true
+yamlf() {
+    if [ -p /dev/stdin ]; then
+        # If input is being piped
+        cat - | yq -C "${@:-.}" | bat --style=plain --paging=always
+    elif [ $# -eq 0 ]; then
+        # If no arguments provided
+        echo "Usage: yamlf [file] [yq filter]" >&2
+        return 1
+    elif [ $# -eq 1 ]; then
+        # If only one argument, treat as file with default filter
+        cat "$1" | yq -C . | bat --style=plain --paging=always
+    else
+        # If file and filter provided
+        cat "$1" | yq -C "${@:2}" | bat --style=plain --paging=always
+    fi
+}
 # Display CSV files in table format
 alias csvt='xsv table'
 
@@ -64,9 +99,10 @@ alias http='http --style=auto'
 # HTTPie with HTTPS as default scheme
 alias https='http --default-scheme=https'
 # Traceroute with real-time updates
-alias trace='sudo m# Monitor network traffic in real-time (all interfaces)
+# Traceroute with real-time updates
+alias trace='sudo mtr --show-ips --curses'
+# Monitor network traffic in real-time (all interfaces)
 alias nettop='sudo bandwhich'
-aceroute
 alias tracet='sudo mtr --show-ips --curses --tcp'
 # Monitor network bandwidth usage
 alias netmon='sudo bandwhich'
