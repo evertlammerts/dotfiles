@@ -2,6 +2,8 @@
 
 A curated collection of dotfiles and scripts for setting up a productive development environment on macOS. This repository provides an automated setup of development tools, shell configurations, and application preferences to get you up and running quickly with a well-configured system.
 
+<img src="https://github.com/evertlammerts/dotfiles/blob/main/header.jpeg?raw=true" title="" alt="header" />
+
 ## ✨ Features & Highlights
 
 - **Automated Setup**: One-command installation of all development tools and configurations
