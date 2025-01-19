@@ -49,19 +49,24 @@ make clean      # Removes all symlinks
 
 ### Homebrew Packages
 The setup script automatically installs:
-- Essential tools: `coreutils`, `moreutils`, `findutils`
-- Shell: `zsh`, `zsh-completions`
-- Development tools: `git`, `neovim`, `tmux`
-- Modern CLI tools: `bat`, `exa`, `ripgrep`, `fd`
+- Essential tools: `coreutils`, `moreutils`, `findutils`, `gnu-sed`
+- Shell: `zsh`, `zsh-completions`, `starship`
+- Development tools: `git`, `neovim`, `tmux`, `fzf`
+- Modern CLI tools: `bat`, `exa`, `ripgrep`, `fd`, `jq`, `tree`
 - Languages and runtimes: `node`, `python`
+- Applications: `iterm2`, `visual-studio-code`
 
 ### Configuration Files
-The following configs are automatically symlinked to your home directory:
-- `.zshrc` → `~/`
-- `.gitconfig` → `~/`
-- `.gitattributes` → `~/`
-- `.tmux.conf` → `~/`
-- `nvim/` → `~/.config/nvim`
+The following configs are automatically symlinked:
+- `zshrc` → `~/.zshrc`
+- `gitconfig` → `~/.gitconfig`
+- `gitignore_global` → `~/.gitignore_global`
+- `tmux.conf` → `~/.tmux.conf`
+- `init.vim` → `~/.config/nvim/init.vim`
+- `ssh_config` → `~/.ssh/config`
+- `aliases` → `~/.aliases`
+- `editconfig` → `~/.editorconfig`
+- `gitattributes` → `~/.gitattributes`
 
 ### macOS Configurations
 Optimizes macOS settings for development:
@@ -75,18 +80,20 @@ Optimizes macOS settings for development:
 
 ```
 .
-├── Makefile              # Installation automation
-├── setup.sh             # Main setup script
-├── zsh/
-│   ├── .zshrc          # ZSH configuration
-│   └── aliases.zsh     # Custom aliases
-├── git/
-│   ├── .gitconfig      # Git configuration
-│   └── .gitattributes  # Git attributes
-├── nvim/
-│   └── init.lua        # Neovim configuration
-└── tmux/
-    └── .tmux.conf      # Tmux configuration
+├── aliases              # Shell aliases
+├── editcorconfig        # EditorConfig configuration
+├── gitattributes        # Git attributes configuration
+├── gitconfig           # Git configuration
+├── gitignore_global    # Global Git ignore patterns
+├── header.jpeg         # Repository header image
+├── init.vim            # Neovim configuration
+├── make.log            # Setup log file
+├── Makefile            # Installation automation
+├── README.md           # Repository documentation
+├── setup.sh            # Main setup script
+├── ssh_config          # SSH configuration
+├── tmux.conf           # Tmux configuration
+└── zshrc               # ZSH configuration
 ```
 
 ## ⚙️ Customization
@@ -112,11 +119,13 @@ Create these files for machine-specific settings (they're git-ignored):
 - Useful aliases and functions
 
 ### Neovim Configuration
-- Modern IDE-like experience
-- Built-in LSP support
-- Fuzzy finding capabilities
-- Git integration
-- Intuitive key mappings
+- Modern IDE-like experience with custom plugins
+- Built-in LSP support with Mason for package management
+- Fuzzy finding with Telescope
+- Git integration via Fugitive and Gitsigns
+- Dedicated Python virtual environment for Neovim plugins
+- TreeSitter for enhanced syntax highlighting
+- WhichKey for keybinding documentation
 
 ### Tmux Configuration
 - Informative status bar
