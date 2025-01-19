@@ -10,7 +10,7 @@ alias tree='lsd --tree'
 
 # File viewing
 # Modern replacement for cat with syntax highlighting
-alias cat='bat'
+alias cat='bat --paging=never'
 # Enhanced pager with syntax highlighting
 alias less='bat --style=plain --paging=always'
 # Preview files with line numbers and Git changes
