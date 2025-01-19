@@ -1,6 +1,6 @@
 # 🏠 Dotfiles
 
-A curated collection of dotfiles and scripts for setting up a productive development environment on macOS. This repository provides an automated setup of development tools, shell configurations, and application preferences to get you up and running quickly with a well-configured system.
+A curated collection of dotfiles and scripts for setting up my terminal tooling on macOS. This repository provides an automated setup of development tools, shell configurations, and application preferences.
 
 <img src="https://github.com/evertlammerts/dotfiles/blob/main/header.jpeg?raw=true" title="" alt="header" />
 
@@ -17,6 +17,8 @@ A curated collection of dotfiles and scripts for setting up a productive develop
 - macOS (primarily tested on the latest version)
 - Command Line Tools for Xcode (`xcode-select --install`)
 - Git (for cloning this repository)
+- iTerm2
+- Visual Studio Code
 
 ## 🚀 Installation
 
@@ -53,8 +55,6 @@ The setup script automatically installs:
 - Shell: `zsh`, `zsh-completions`, `starship`
 - Development tools: `git`, `neovim`, `tmux`, `fzf`
 - Modern CLI tools: `bat`, `exa`, `ripgrep`, `fd`, `jq`, `tree`
-- Languages and runtimes: `node`, `python`
-- Applications: `iterm2`, `visual-studio-code`
 
 ### Configuration Files
 The following configs are automatically symlinked:
