@@ -85,6 +85,9 @@ zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
 
+# Load machine-specific configurations
+test -s "${HOME}/.zshrc.local" && . "${HOME}/.zshrc.local" || true
+
 # Initialize Starship prompt
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
