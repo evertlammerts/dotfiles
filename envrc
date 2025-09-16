@@ -1,0 +1,2 @@
+PATH_add "$HOME/.duckdb/cli/latest"
+export GPG_TTY=$(tty)

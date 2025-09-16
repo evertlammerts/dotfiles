@@ -71,6 +71,7 @@ install_tools() {
         "httpie"
         "mtr"
         "bandwhich"
+        "direnv"
     )
 
     # Define descriptions
@@ -96,6 +97,7 @@ install_tools() {
         "Modern HTTP client"
         "Network diagnostic tool"
         "Network usage monitor"
+        "Direnv clean shell envs"
     )
 
     # Verify that tools and descriptions have the same number of elements

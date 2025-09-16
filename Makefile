@@ -14,6 +14,7 @@ symlinks:
 	[ -f ~/.gitignore_global ] || ln -s $(PWD)/gitignore_global ~/.gitignore_global
 	[ -f ~/.tmux.conf ] || ln -s $(PWD)/tmux.conf ~/.tmux.conf
 	[ -f ~/.ssh/config ] || ln -s $(PWD)/ssh_config ~/.ssh/config
+	[ -f ~/.envrc ] || ln -s $(PWD)/envrc ~/.envrc
 
 clean:
 	-rm -f ~/.config/nvim/init.vim
