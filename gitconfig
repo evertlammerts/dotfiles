@@ -1,6 +1,6 @@
 [user]
-    name = Evert
-    email = evert.lammerts+github@gmail.com
+    name = Evert Lammerts
+    email = evert.lammerts@gmail.com
 
 [core]
     editor = nvim
@@ -41,3 +41,5 @@
     last = log -1 HEAD
     lg = log --color --graph --pretty=format:'%C(bold red)%h%Creset -%C(yellow)%d%Creset %s %C(green)(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 
+[rerere]
+	enabled = true
