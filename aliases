@@ -110,3 +110,53 @@ alias netmon='sudo bandwhich'
 alias netcon='sudo bandwhich --connections'
 # List all listening TCP ports
 alias ports='sudo lsof -iTCP -sTCP:LISTEN -P -n'
+# Switch git remote to a different org
+git-remote-switch() {
+    grs_usage() {
+      echo "git-remote-switch [-u] ORG"
+      echo ""
+      echo "  -u      Set the previous origin to upstream"
+      echo "  ORIGIN  The new github org to use"
+      echo ""
+    }
+
+    set_upstream=0
+
+    local OPTIND o a
+    while getopts ":u" opt; do
+        case "${opt}" in
+            u)
+                set_upstream=1
+                ;;
+            *)
+                grs_usage
+                return
+                ;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    org="$1"
+
+    if [[ -z $org ]]; then
+      echo "Error: No ORG provided!"
+      echo ""
+      grs_usage
+      return
+    fi
+    if [[ ! -z $2 ]]; then
+      echo "Too many arguments: $@"
+      echo ""
+      grs_usage
+      return
+    fi
+
+    cur_url=$( git remote get-url origin )
+    new_url=$( echo "$cur_url" | sed -E "s#(github.com[:/])[^/]+#\1$org#" )
+
+    git remote set-url origin "$new_url"
+    [[ -z $( git remote | grep upstream ) ]] || echo "Removing existing remote 'upstream'" && git remote remove upstream
+    [[ $set_upstream == 1 ]] && echo "Setting new remote 'upstream' to previous origin" && git remote add upstream $cur_url
+    echo "Done. New remotes:"
+    git remote -v
+}

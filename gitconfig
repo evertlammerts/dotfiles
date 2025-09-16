@@ -1,6 +1,7 @@
 [user]
     name = Evert Lammerts
     email = evert.lammerts@gmail.com
+	signingkey = 9BFF339D1FDBF8ED
 
 [core]
     editor = nvim
@@ -43,3 +44,7 @@
 
 [rerere]
 	enabled = true
+[commit]
+	gpgsign = true
+[tag]
+	gpgSign = true
