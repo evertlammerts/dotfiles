@@ -1,17 +1,27 @@
 #!/usr/bin/env zsh
+#
+# Usage: ./setup.sh work|personal [links]
+#
+#   work      shared tools and configuration
+#   personal  also the personal Brewfile, homelab hosts and huisarchief
+#   links     only create the symlinks, install nothing
 
-# Set up logging
-LOG_FILE="$HOME/projects/dotfiles/make.log"
-# Clear previous log
+SCRIPT_DIR="$(cd "$(dirname "${(%):-%N}")" && pwd)"
+PROFILE="${1:-}"
+STEP="${2:-all}"
+
+if [[ $PROFILE != (work|personal) || $STEP != (all|links) ]]; then
+    echo "usage: $0 work|personal [links]" >&2
+    exit 2
+fi
+
+LOG_FILE="$SCRIPT_DIR/setup.log"
 : > "$LOG_FILE"
-# Redirect all output to both terminal and log file
 exec 1> >(tee -a "$LOG_FILE")
 exec 2> >(tee -a "$LOG_FILE" >&2)
 
-# Initialize an array to collect failed steps
 failed_steps=()
 
-# Logging functions
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
@@ -21,20 +31,17 @@ error() {
     failed_steps+=("$1")
 }
 
-# Determine the directory where the script is located
-SCRIPT_DIR="$(cd "$(dirname "${(%):-%N}")" && pwd)"
-
-# Create necessary directories
 setup_directories() {
     log "Creating necessary directories..."
     mkdir -p "$HOME/.config/nvim/colors" \
              "$HOME/.local/share/nvim/site/autoload" \
-             "$HOME/.ssh" \
-             "$HOME/.ssh/control"
+             "$HOME/.local/bin" \
+             "$HOME/.config/git" \
+             "$HOME/.ssh/control" \
+             "$HOME/Library/Application Support/iTerm2/DynamicProfiles"
     chmod 700 "$HOME/.ssh" "$HOME/.ssh/control" || error "Failed to set permissions on ~/.ssh directories"
 }
 
-# Install Homebrew if not present
 install_homebrew() {
     if ! command -v brew >/dev/null 2>&1; then
         log "Installing Homebrew..."
@@ -42,124 +49,36 @@ install_homebrew() {
     else
         log "Homebrew is already installed, skipping..."
     fi
+    eval "$(/opt/homebrew/bin/brew shellenv)"
 }
 
-# Install essential tools
-install_tools() {
-    log "Installing command line tools..."
-
-    # Define tools
-    tools=(
-        "neovim"
-        "gh"
-        "bat"
-        "ripgrep"
-        "lsd"
-        "starship"
-        "zsh-autosuggestions"
-        "zsh-syntax-highlighting"
-        "tmux"
-        "git-delta"
-        "fd"
-        "duf"
-        "ncdu"
-        "jq"
-        "yq"
-        "xsv"
-        "btop"
-        "tldr"
-        "httpie"
-        "mtr"
-        "bandwhich"
-        "direnv"
-    )
-
-    # Define descriptions
-    descriptions=(
-        "Text editor"
-        "GitHub CLI"
-        "Cat clone with syntax highlighting"
-        "Fast search tool"
-        "Modern ls replacement with icons"
-        "Shell prompt"
-        "ZSH autosuggestions"
-        "ZSH syntax highlighting"
-        "Terminal multiplexer"
-        "Better diff viewer"
-        "User-friendly find alternative"
-        "Better disk usage viewer"
-        "NCurses disk usage analyzer"
-        "JSON processor"
-        "YAML processor"
-        "CSV toolkit"
-        "Process/system monitor"
-        "Simplified man pages"
-        "Modern HTTP client"
-        "Network diagnostic tool"
-        "Network usage monitor"
-        "Direnv clean shell envs"
-    )
-
-    # Verify that tools and descriptions have the same number of elements
-    if [ ${#tools[@]} -ne ${#descriptions[@]} ]; then
-        error "The number of tools and descriptions do not match."
-        return
+install_packages() {
+    log "Installing Homebrew packages..."
+    brew bundle --file="$SCRIPT_DIR/Brewfile" || error "brew bundle failed for Brewfile"
+    if [[ $PROFILE == personal ]]; then
+        brew bundle --file="$SCRIPT_DIR/personal/Brewfile" || error "brew bundle failed for personal/Brewfile"
     fi
 
-    # Install JetBrains Mono Nerd Font for terminal icons and special characters
-    if ! brew list --cask font-jetbrains-mono-nerd-font > /dev/null 2>&1; then
-        log "Installing JetBrains Mono Nerd Font..."
-        brew install --cask font-jetbrains-mono-nerd-font || error "Failed to install JetBrains Mono Nerd Font"
-    else
-        log "JetBrains Mono Nerd Font is already installed, skipping..."
-    fi
+    # coreutils installs GNU timeout as gtimeout so it does not shadow BSD tools.
+    ln -sf "$(brew --prefix)/bin/gtimeout" "$HOME/.local/bin/timeout" || error "Failed to link timeout"
+}
 
-    failed_installs=()
-
-    for ((i=1; i<=${#tools}; i++)); do
-        tool=${tools[i]}
-        description=${descriptions[i]}
-        
-        if ! brew list "$tool" > /dev/null 2>&1; then
-            log "Installing ${tool} (${description})..."
-            if ! brew install "$tool"; then
-                log "WARNING: Failed to install ${tool}"
-                failed_installs+=("$tool")
-            fi
-        else
-            log "${tool} is already installed, skipping..."
-        fi
+install_python() {
+    log "Installing Python versions and uv tools..."
+    uv python install 3.12 3.13 || error "Failed to install Python versions"
+    # cmake-format (cmakelang) fails under Python 3.14.
+    uv python pin --global 3.13 || error "Failed to pin the global Python version"
+    # pre-commit hook environments inherit its interpreter, and they run cmake-format.
+    uv tool install --python 3.12 pre-commit || error "Failed to install pre-commit"
+    for tool in git-filter-repo rust-just py-spy; do
+        uv tool install "$tool" || error "Failed to install $tool"
     done
-
-    # Remove hub if installed (replacing with gh)
-    if brew list hub > /dev/null 2>&1; then
-        log "Removing hub in favor of gh..."
-        if ! brew uninstall hub 2>/dev/null; then
-            log "WARNING: Failed to uninstall hub"
-            failed_steps+=("Failed to uninstall hub")
-        fi
-    fi
-
-    # Report any failures at the end
-    if (( ${#failed_installs[@]} > 0 )); then
-        log "WARNING: The following tools failed to install:"
-        for tool in "${failed_installs[@]}"; do
-            # Find the description for the failed tool
-            for ((i=1; i<=${#tools}; i++)); do
-                if [ "$tool" = "${tools[i]}" ]; then
-                    log "  - $tool (${descriptions[i]})"
-                    break
-                fi
-            done
-        done
-    fi
 }
 
-# Install and configure Oh My Zsh
 setup_zsh() {
     if [ ! -d "$HOME/.oh-my-zsh" ]; then
         log "Installing Oh My Zsh..."
-        
+
         # Backup existing .zshrc if it exists
         if [ -f "$HOME/.zshrc" ]; then
             log "Backing up existing .zshrc..."
@@ -168,7 +87,7 @@ setup_zsh() {
                 return
             fi
         fi
-        
+
         # Install Oh My Zsh
         if ! sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended; then
             # Restore backup if installation fails
@@ -178,7 +97,7 @@ setup_zsh() {
             error "Failed to install Oh My Zsh"
             return
         fi
-        
+
         # Remove the default .zshrc created by Oh My Zsh
         if [ -f "$HOME/.zshrc" ]; then
             log "Removing default Oh My Zsh .zshrc..."
@@ -187,7 +106,7 @@ setup_zsh() {
                 return
             fi
         fi
-        
+
         # If we had a backup, save it with a timestamp
         if [ -f "$HOME/.zshrc.pre-oh-my-zsh" ]; then
             if ! mv "$HOME/.zshrc.pre-oh-my-zsh" "$HOME/.zshrc.backup.$(date +%Y%m%d)"; then
@@ -199,26 +118,8 @@ setup_zsh() {
     fi
 }
 
-# Set up Neovim
 setup_neovim() {
     log "Setting up Neovim..."
-
-    # Create Python virtual environment for neovim
-    local venv_path="$HOME/.config/nvim/venv/neovim"
-    if [ ! -d "$venv_path" ]; then
-        log "Creating Python virtual environment for neovim..."
-        if ! python3 -m venv "$venv_path"; then
-            error "Failed to create Python virtual environment for neovim"
-            return
-        fi
-    fi
-
-    # Install pynvim in the virtual environment
-    log "Installing pynvim in virtual environment..."
-    if ! "$venv_path/bin/pip" install --upgrade pip pynvim; then
-        error "Failed to install pynvim in virtual environment"
-        return
-    fi
 
     # molokai color scheme
     if ! curl -fLo "$HOME/.config/nvim/colors/molokai.vim" --create-dirs \
@@ -242,7 +143,23 @@ setup_neovim() {
     fi
 }
 
-# macOS specific configurations
+setup_git_signing() {
+    log "Setting up SSH commit signing..."
+    local key="$HOME/.ssh/id_ed25519"
+    local email="$(git config -f "$SCRIPT_DIR/gitconfig" user.email)"
+
+    if [ ! -f "$key" ]; then
+        log "Generating $key..."
+        if ! ssh-keygen -t ed25519 -C "$email" -f "$key"; then
+            error "Failed to generate $key"
+            return
+        fi
+        log "Add $key.pub to GitHub twice: as an authentication key and as a signing key"
+    fi
+
+    echo "$email $(cat "$key.pub")" > "$HOME/.config/git/allowed_signers" || error "Failed to write allowed_signers"
+}
+
 setup_macos() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         log "Configuring macOS settings..."
@@ -254,121 +171,70 @@ setup_macos() {
         defaults write com.apple.finder ShowStatusBar -bool true || error "Failed to show status bar in Finder"
         # Use list view in Finder windows by default
         defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv" || error "Failed to set Finder view style to list"
-        
+
         # Apply Finder changes
         if ! killall Finder; then
             error "Failed to restart Finder"
         fi
+
+        # Long builds and test runs otherwise die when the machine idles to sleep.
+        log "Disabling system sleep on power adapter (asks for your password)..."
+        sudo pmset -c sleep 0 || error "Failed to disable system sleep on power adapter"
+
+        for dir in "$HOME/.cache" "$HOME/.ccache"; do
+            if [ -d "$dir" ]; then
+                tmutil addexclusion "$dir" || error "Failed to exclude $dir from Time Machine"
+            fi
+        done
     fi
 }
 
-# Set up iTerm2
 setup_iterm2() {
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        log "Starting iTerm2 configuration..."
-        
-        # Create iTerm2 dynamic profiles directory if it doesn't exist
-        local profiles_dir="$HOME/Library/Application Support/iTerm2/DynamicProfiles"
-        log "Creating profiles directory: $profiles_dir"
-        if ! mkdir -p "$profiles_dir"; then
-            log "WARNING: Failed to create iTerm2 profiles directory"
-            failed_steps+=("Failed to create iTerm2 profiles directory")
-            return
-        fi
-        
-        # Generate a valid UUID for the GUID
-        local guid
-        if command -v uuidgen >/dev/null 2>&1; then
-            guid=$(uuidgen)
-        else
-            # Fallback if uuidgen is not available
-            guid=$(LC_ALL=C tr -dc 'a-f0-9' < /dev/urandom | head -c 32)
-            guid="${guid:0:8}-${guid:8:4}-${guid:12:4}-${guid:16:4}-${guid:20:12}"
-        fi
-        
-        # Create a dynamic profile with our preferred settings
-        local profile_file="$profiles_dir/dotfiles_profile.json"
-        log "Creating profile file: $profile_file"
-        cat > "$profile_file" << EOL
-{
-    "Profiles": [
-        {
-            "Name": "Dotfiles Profile",
-            "Guid": "$guid",
-            "Normal Font": "JetBrainsMonoNFM-Regular 14",
-            "Use Non-ASCII Font": false,
-            "ASCII Anti Aliased": true,
-            "Use Bold Font": true,
-            "Use Bright Bold": true,
-            "Use Italic Font": true,
-            "Horizontal Spacing": 1,
-            "Vertical Spacing": 1,
-            "Use Custom Window Title": false,
-            "Window Type": 0,
-            "Background Color": {
-                "Red Component": 0.0,
-                "Green Component": 0.0,
-                "Blue Component": 0.0
-            },
-            "Foreground Color": {
-                "Red Component": 1.0,
-                "Green Component": 1.0,
-                "Blue Component": 1.0
-            }
-        }
-    ]
-}
-EOL
-        if [ $? -ne 0 ]; then
-            log "WARNING: Failed to create iTerm2 profile"
-            failed_steps+=("Failed to create iTerm2 profile")
-            return
-        fi
-        
-        log "Created iTerm2 profile successfully"
-        log "Attempting to set default profile..."
-        
-        if defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "$guid" > /dev/null 2>&1; then
-            log "Successfully set default iTerm2 profile"
-        else
-            log "WARNING: Failed to set default iTerm2 profile"
-            failed_steps+=("Failed to set default iTerm2 profile")
-        fi
-        
-        log "iTerm2 configuration completed"
-        log "Note: Please restart iTerm2 and select 'Dotfiles Profile' from the profiles menu if it's not set automatically."
-    fi
+    log "Linking iTerm2 profile..."
+    local profile="$SCRIPT_DIR/iterm2/dotfiles_profile.json"
+    # A backup copy in DynamicProfiles would load as a second profile with the same Guid.
+    ln -sf "$profile" "$HOME/Library/Application Support/iTerm2/DynamicProfiles/dotfiles_profile.json" \
+        || error "Failed to link iTerm2 profile"
+    defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "$(plutil -extract Profiles.0.Guid raw "$profile")" \
+        || error "Failed to set default iTerm2 profile"
 }
 
-# Create symlinks
 setup_symlinks() {
     log "Setting up symlinks..."
-    
+
     # Array of files to symlink (source:destination)
     local links=(
         "init.vim:.config/nvim/init.vim"
+        "zshenv:.zshenv"
         "zshrc:.zshrc"
         "aliases:.aliases"
         "gitconfig:.gitconfig"
+        "gitattributes:.gitattributes"
         "gitignore_global:.gitignore_global"
         "tmux.conf:.tmux.conf"
         "ssh_config:.ssh/config"
     )
-    
+    if [[ $PROFILE == personal ]]; then
+        links+=(
+            "personal/zshrc:.zshrc.local"
+            "personal/ssh_config:.ssh/config.local"
+        )
+    fi
+
     local failed_links=()
-    
+
     for link in "${links[@]}"; do
         local src="${link%%:*}"
         local dst="${link#*:}"
         local target="$HOME/$dst"
         local source_file="$SCRIPT_DIR/$src"
-        
+
         # Skip if symlink already exists
         if [ -L "$target" ]; then
             log "Symlink for $dst already exists, skipping..."
             continue
         fi
-        
+
         # Backup existing file if it's not a symlink
         if [ -e "$target" ] && [ ! -L "$target" ]; then
             log "Backing up existing $dst..."
@@ -378,7 +244,7 @@ setup_symlinks() {
                 continue
             fi
         fi
-        
+
         # Create symlink
         if ! ln -s "$source_file" "$target"; then
             log "WARNING: Failed to create symlink for $dst"
@@ -387,7 +253,7 @@ setup_symlinks() {
             log "Created symlink: $target -> $source_file"
         fi
     done
-    
+
     # Report any failures
     if [ ${#failed_links[@]} -gt 0 ]; then
         log "WARNING: Failed to create the following symlinks:"
@@ -397,19 +263,24 @@ setup_symlinks() {
     fi
 }
 
-# Main setup
 main() {
-    log "Starting dotfiles setup..."
-    
+    log "Starting dotfiles setup ($PROFILE, $STEP)..."
+
     setup_directories
-    install_homebrew
-    install_tools
-    setup_zsh
-    setup_neovim
-    setup_macos
-    setup_iterm2
+    if [[ $STEP == all ]]; then
+        install_homebrew
+        install_packages
+        install_python
+        setup_zsh
+    fi
     setup_symlinks
-    
+    setup_iterm2
+    if [[ $STEP == all ]]; then
+        setup_neovim
+        setup_git_signing
+        setup_macos
+    fi
+
     if [ ${#failed_steps[@]} -ne 0 ]; then
         log "The following errors occurred during setup:"
         for step in "${failed_steps[@]}"; do
@@ -417,9 +288,8 @@ main() {
         done
         exit 1
     fi
-    
+
     log "Setup completed successfully!"
 }
 
 main
-

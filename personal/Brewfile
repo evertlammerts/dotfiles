@@ -1,0 +1,15 @@
+# Homelab secrets and access
+brew "age"
+brew "sops"
+brew "cloudflared"
+brew "rclone"
+cask "1password-cli"
+
+# Documents and media
+brew "ffmpeg"
+brew "poppler"
+brew "tesseract-lang"
+brew "tex-fmt"
+cask "mactex-no-gui"
+cask "rar"
+cask "pgadmin4"
