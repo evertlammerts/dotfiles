@@ -13,7 +13,7 @@ repository, then run the setup script with a profile:
 ```bash
 git clone https://github.com/evertlammerts/dotfiles.git ~/projects/dotfiles
 cd ~/projects/dotfiles
-./setup.sh work        # shared tools and configuration
+./setup.sh work        # shared tools and configuration, see Work machines below
 ./setup.sh personal    # also homelab hosts, huisarchief and personal packages
 ```
 
@@ -49,11 +49,21 @@ then not sign a commit or push without a click. Before running
    `~/.ssh/id_ed25519.pub`, and add it to GitHub twice: as an authentication
    key and as a signing key. Keep no private key in `~/.ssh/id_ed25519`;
    setup reports an error with one there.
-4. Run setup from Terminal.app, then `gh auth login` with HTTPS.
+4. Run setup from Terminal.app, then `gh auth login` with HTTPS, and answer
+   no when it offers to authenticate Git with your GitHub credentials.
 
-The work overlay points `SSH_AUTH_SOCK` at Bitwarden, fetches from GitHub over
-HTTPS with gh's login, and pushes over SSH. The shared `ssh_config` turns off
-connection sharing for github.com, so every push asks.
+How it works:
+
+- The work overlay points `SSH_AUTH_SOCK` at Bitwarden, and setup writes the
+  signing key as a literal so git signs only through the agent.
+- Git has no GitHub credentials for HTTPS. Clone public repos over HTTPS:
+  fetching needs no prompt, and pushes are rewritten to SSH. Clone private
+  repos over SSH, which prompts for fetches as well.
+- The shared `ssh_config` turns off connection sharing for GitHub, so every
+  push asks.
+
+Expect one prompt per commit, per rebased or amended commit, and per push.
+Git started from apps outside a shell cannot sign at all.
 
 It stops the default paths, not a determined agent: committing with signing
 disabled, pushing to a URL with a token in it, and writes through `gh` all
@@ -88,7 +98,7 @@ bypass it.
 | `personal/zshrc` | `~/.zshrc.personal` | Personal profile only |
 | `personal/ssh_config` | `~/.ssh/config.personal` | Personal profile only |
 | `work/zshenv` | `~/.zshenv.work` | Work profile only: Bitwarden SSH agent |
-| `work/gitconfig` | `~/.gitconfig.work` | Work profile only: HTTPS fetch, SSH push |
+| `work/gitconfig` | `~/.gitconfig.work` | Work profile only: SSH push, no HTTPS credentials |
 
 ## Maintenance
 

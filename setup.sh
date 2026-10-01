@@ -2,7 +2,7 @@
 #
 # Usage: ./setup.sh work|personal [links]
 #
-#   work      shared tools and configuration
+#   work      shared tools and configuration, with the GitHub key in Bitwarden
 #   personal  also the personal Brewfile, homelab hosts and huisarchief
 #   links     only link configuration, set the iTerm2 profile and set up commit
 #             signing, install nothing
@@ -155,13 +155,18 @@ setup_git_signing() {
     local key="$HOME/.ssh/id_ed25519"
     local email="$(git -C "$HOME" config user.email)"
 
-    # The public half alone is enough when the private key lives in an agent.
-    if [ ! -f "$key.pub" ]; then
-        # On work machines a key on disk would sign without asking.
-        if [[ $PROFILE == work ]]; then
+    if [[ $PROFILE == work ]]; then
+        # ssh authenticates GitHub with a key file directly, without the agent.
+        if [ -f "$key" ]; then
+            error "$key pushes without approval: move the key into Bitwarden and delete the file"
+        fi
+        if [ ! -f "$key.pub" ]; then
             error "Missing $key.pub: create the key in Bitwarden and save its public half there"
             return
         fi
+        printf '[user]\n\tsigningkey = key::%s\n' "$(cat "$key.pub")" > "$HOME/.config/git/signing-key.gitconfig" \
+            || error "Failed to write signing-key.gitconfig"
+    elif [ ! -f "$key.pub" ]; then
         if [ -f "$key" ]; then
             error "Missing $key.pub, regenerate it with ssh-keygen -y -f $key"
             return
@@ -173,11 +178,6 @@ setup_git_signing() {
         fi
         ssh-add --apple-use-keychain "$key" || error "Failed to add $key to ssh-agent and the keychain"
         log "Add $key.pub to GitHub twice: as an authentication key and as a signing key"
-    fi
-
-    # ssh-keygen falls back to the private key file when the agent lacks the key.
-    if [[ $PROFILE == work && -f $key ]]; then
-        error "$key signs without approval: move the key into Bitwarden and delete the file"
     fi
 
     echo "$email $(cat "$key.pub")" > "$HOME/.config/git/allowed_signers" || error "Failed to write allowed_signers"

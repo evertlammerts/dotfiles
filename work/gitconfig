@@ -1,14 +1,12 @@
-# Fetch over HTTPS and push over SSH, so the approving SSH agent prompts for
-# pushes but not for every fetch. The first pushInsteadOf keeps SSH remotes on
-# SSH for push, because a matching pushInsteadOf stops insteadOf from applying.
-[url "https://github.com/"]
-	insteadOf = git@github.com:
+# Push GitHub repos over SSH, so the approving agent asks before every push.
+# Git gets no GitHub credentials for HTTPS: public repos still fetch
+# anonymously, and an HTTPS push fails instead of going through unasked.
 [url "git@github.com:"]
-	pushInsteadOf = git@github.com:
 	pushInsteadOf = https://github.com/
-
-# HTTPS fetches of private repos use gh's login. An absolute path, because
-# apps started outside a shell do not have Homebrew on PATH.
 [credential "https://github.com"]
 	helper =
-	helper = !/opt/homebrew/bin/gh auth git-credential
+
+# Written by setup.sh. A literal key:: signing key makes git pass -U, so
+# ssh-keygen signs only through the agent and never with a key file on disk.
+[include]
+	path = ~/.config/git/signing-key.gitconfig
