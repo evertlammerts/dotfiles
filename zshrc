@@ -1,7 +1,3 @@
-# macOS path_helper in /etc/zprofile reorders PATH for login shells after
-# ~/.zshenv ran, so apply it again.
-source "${HOME}/.zshenv"
-
 export LC_ALL="en_US.UTF-8"
 
 export ZSH="$HOME/.oh-my-zsh"
@@ -56,7 +52,7 @@ bindkey '^R' fzf-history-widget
 # JSON/YAML/CSV functions
 function jsonview() { cat "$1" | jq -C '.' | less -R }
 function yamlview() { cat "$1" | yq -p=yaml -o=json | jq -C '.' | less -R }
-function csvview() { xsv table "$1" | less -S }
+function csvview() { qsv table "$1" | less -S }
 
 # Network monitoring functions
 function port() { sudo lsof -i ":$1" }
@@ -76,9 +72,10 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 
 # Commit signing needs the key in ssh-agent, which stays empty after login
 # until the first ssh connection loads it from the keychain.
-ssh-add -l >/dev/null 2>&1 || ssh-add --apple-load-keychain -q 2>/dev/null
+ssh-add -T ~/.ssh/id_ed25519.pub >/dev/null 2>&1 || ssh-add --apple-load-keychain -q 2>/dev/null
 
-# Load machine-specific configurations
+# Load the personal profile, then machine-specific configuration
+test -s "${HOME}/.zshrc.personal" && . "${HOME}/.zshrc.personal" || true
 test -s "${HOME}/.zshrc.local" && . "${HOME}/.zshrc.local" || true
 
 source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
