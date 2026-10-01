@@ -1,7 +1,7 @@
 [user]
     name = Evert Lammerts
     email = evert.lammerts@gmail.com
-	signingkey = 9BFF339D1FDBF8ED
+    signingkey = ~/.ssh/id_ed25519.pub
 
 [core]
     editor = nvim
@@ -18,7 +18,7 @@
     line-numbers = true
 
 [merge]
-    conflictstyle = diff3
+    conflictstyle = zdiff3
 
 [diff]
     colorMoved = default
@@ -48,3 +48,13 @@
 	gpgsign = true
 [tag]
 	gpgSign = true
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.config/git/allowed_signers
+[fetch]
+	prune = true
+
+# Last, so machine-specific settings win.
+[include]
+	path = ~/.gitconfig.local
