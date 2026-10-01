@@ -2,13 +2,13 @@
 # editors and build tools start, so keep it fast and free of output.
 
 export LANG="en_US.UTF-8"
-export LC_ALL="en_US.UTF-8"
 export EDITOR=nvim
 
 export HOMEBREW_PREFIX=/opt/homebrew
 typeset -U path PATH
 path=(
     $HOME/.local/bin
+    $HOME/.duckdb/cli/latest
     $HOMEBREW_PREFIX/opt/curl/bin
     $HOMEBREW_PREFIX/bin
     $HOMEBREW_PREFIX/sbin

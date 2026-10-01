@@ -2,6 +2,8 @@
 # ~/.zshenv ran, so apply it again.
 source "${HOME}/.zshenv"
 
+export LC_ALL="en_US.UTF-8"
+
 export ZSH="$HOME/.oh-my-zsh"
 
 # Oh My Zsh theme (using Starship instead)
@@ -71,6 +73,10 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
+
+# Commit signing needs the key in ssh-agent, which stays empty after login
+# until the first ssh connection loads it from the keychain.
+ssh-add -l >/dev/null 2>&1 || ssh-add --apple-load-keychain -q 2>/dev/null
 
 # Load machine-specific configurations
 test -s "${HOME}/.zshrc.local" && . "${HOME}/.zshrc.local" || true
