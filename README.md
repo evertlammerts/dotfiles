@@ -1,169 +1,72 @@
 # 🏠 Dotfiles
 
-A curated collection of dotfiles and scripts for setting up my terminal tooling on macOS. This repository provides an automated setup of development tools, shell configurations, and application preferences.
+Shell, git, editor and terminal configuration for macOS on Apple Silicon, plus
+the Homebrew packages that go with it.
 
 <img src="https://github.com/evertlammerts/dotfiles/blob/main/header.jpeg?raw=true" title="" alt="header" />
 
-## ✨ Features & Highlights
+## Setup
 
-- **Automated Setup**: One-command installation of all development tools and configurations
-- **ZSH Configuration**: Custom prompt, syntax highlighting, auto-suggestions, and intelligent completions
-- **Development Tools**: Neovim, tmux, git, and modern CLI alternatives
-- **macOS Optimization**: Sensible macOS defaults for developers
-- **Modular Design**: Easy to customize and extend
+Install the Xcode Command Line Tools (`xcode-select --install`), clone this
+repository, then run the setup script with a profile:
 
-## 📋 Prerequisites
-
-- macOS (primarily tested on the latest version)
-- Command Line Tools for Xcode (`xcode-select --install`)
-- Git (for cloning this repository)
-- iTerm2
-- Visual Studio Code
-
-## 🚀 Installation
-
-1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
+git clone https://github.com/evertlammerts/dotfiles.git ~/projects/dotfiles
+cd ~/projects/dotfiles
+./setup.sh work        # shared tools and configuration
+./setup.sh personal    # also homelab hosts, huisarchief and personal packages
 ```
 
-2. Run the setup script:
+`./setup.sh <profile> links` only creates the symlinks. Setup logs to
+`setup.log` next to the script.
+
+The full run:
+
+- installs Homebrew and everything in `Brewfile` (and `personal/Brewfile`)
+- links GNU `timeout` from coreutils into `~/.local/bin`
+- installs Python 3.12 and 3.13 with uv, pins 3.13 globally, and installs the
+  uv tools pre-commit, git-filter-repo, just and py-spy
+- installs Oh My Zsh and the Neovim plugins
+- generates `~/.ssh/id_ed25519` if it is missing and writes the allowed signers
+  file for SSH commit signing
+- sets Finder defaults, disables system sleep on the power adapter, and
+  excludes `~/.cache` and `~/.ccache` from Time Machine
+- links the iTerm2 profile and makes it the default
+
+## After setup
+
+- Add `~/.ssh/id_ed25519.pub` to GitHub as an authentication key and as a
+  signing key. Commits are signed with it, and GitHub shows them as unverified
+  until the signing key is registered.
+- Add `~/projects` to System Settings, Spotlight, Search Privacy so builds do
+  not trigger indexing.
+- Put machine-specific settings in `~/.zshrc.local`, `~/.gitconfig.local` or
+  `~/.ssh/config.local`. The personal profile links its own files there.
+
+## Layout
+
+| File | Linked to | Notes |
+|---|---|---|
+| `zshenv` | `~/.zshenv` | PATH and environment for every zsh, including non-interactive shells |
+| `zshrc` | `~/.zshrc` | Interactive shell: Oh My Zsh, history, completion, prompt |
+| `aliases` | `~/.aliases` | Aliases never shadow a standard command |
+| `gitconfig` | `~/.gitconfig` | Includes `~/.gitconfig.local` last |
+| `gitignore_global` | `~/.gitignore_global` | |
+| `gitattributes` | `~/.gitattributes` | |
+| `ssh_config` | `~/.ssh/config` | Includes `~/.ssh/config.local` first |
+| `tmux.conf` | `~/.tmux.conf` | |
+| `init.vim` | `~/.config/nvim/init.vim` | |
+| `iterm2/dotfiles_profile.json` | iTerm2 `DynamicProfiles` | |
+| `personal/zshrc` | `~/.zshrc.local` | Personal profile only |
+| `personal/ssh_config` | `~/.ssh/config.local` | Personal profile only |
+
+## Maintenance
+
 ```bash
-./setup.sh
+brew bundle --file=Brewfile          # install what is missing
+brew bundle cleanup --file=Brewfile  # list what is installed but not listed
 ```
 
-The setup script will:
-- Install Homebrew if not already installed
-- Install all required packages and applications
-- Create necessary directories
-- Set up symlinks for configuration files
-- Configure macOS preferences
-
-Alternatively, for manual control:
-```bash
-make install    # Creates directories and symlinks
-make symlinks   # Only creates symlinks
-make clean      # Removes all symlinks
-```
-
-## 📦 What Gets Installed
-
-### Homebrew Packages
-The setup script automatically installs:
-- Essential tools: `coreutils`, `moreutils`, `findutils`, `gnu-sed`
-- Shell: `zsh`, `zsh-completions`, `starship`
-- Development tools: `git`, `neovim`, `tmux`, `fzf`
-- Modern CLI tools: `bat`, `exa`, `ripgrep`, `fd`, `jq`, `tree`
-
-### Configuration Files
-The following configs are automatically symlinked:
-- `zshrc` → `~/.zshrc`
-- `gitconfig` → `~/.gitconfig`
-- `gitignore_global` → `~/.gitignore_global`
-- `tmux.conf` → `~/.tmux.conf`
-- `init.vim` → `~/.config/nvim/init.vim`
-- `ssh_config` → `~/.ssh/config`
-- `aliases` → `~/.aliases`
-- `editconfig` → `~/.editorconfig`
-- `gitattributes` → `~/.gitattributes`
-
-### macOS Configurations
-Optimizes macOS settings for development:
-- Faster key repeat and lower key delay
-- Dock and Mission Control improvements
-- Finder enhancements
-- Security and privacy preferences
-- Development-friendly system defaults
-
-## 📁 Repository Structure
-
-```
-.
-├── aliases              # Shell aliases
-├── editcorconfig        # EditorConfig configuration
-├── gitattributes        # Git attributes configuration
-├── gitconfig           # Git configuration
-├── gitignore_global    # Global Git ignore patterns
-├── header.jpeg         # Repository header image
-├── init.vim            # Neovim configuration
-├── make.log            # Setup log file
-├── Makefile            # Installation automation
-├── README.md           # Repository documentation
-├── setup.sh            # Main setup script
-├── ssh_config          # SSH configuration
-├── tmux.conf           # Tmux configuration
-└── zshrc               # ZSH configuration
-```
-
-## ⚙️ Customization
-
-### Local Overrides
-Create these files for machine-specific settings (they're git-ignored):
-- `~/.zshrc.local` - Local shell settings
-- `~/.gitconfig.local` - Local git configuration
-- `~/.tmux.conf.local` - Local tmux settings
-
-### Adding New Tools
-1. Add Homebrew packages to `setup.sh`
-2. Create configuration files in the appropriate directory
-3. Update the Makefile to include new symlinks
-
-## Tool-Specific Features
-
-### ZSH Setup
-- Customized prompt with git status integration
-- Syntax highlighting for commands
-- Auto-suggestions based on history
-- Enhanced tab completion
-- Useful aliases and functions
-
-### Neovim Configuration
-- Modern IDE-like experience with custom plugins
-- Built-in LSP support with Mason for package management
-- Fuzzy finding with Telescope
-- Git integration via Fugitive and Gitsigns
-- Dedicated Python virtual environment for Neovim plugins
-- TreeSitter for enhanced syntax highlighting
-- WhichKey for keybinding documentation
-
-### Tmux Configuration
-- Informative status bar
-- Mouse mode enabled
-- Enhanced copy mode
-- Session management
-- Productive key bindings
-
-### Git Configuration
-- Productivity-focused aliases
-- Enhanced diff output
-- Sensible defaults
-- Global ignore patterns
-- Attribute configurations
-
-## 🔄 Maintenance
-
-### Updates
-To update your dotfiles:
-```bash
-cd ~/.dotfiles
-git pull
-make install
-```
-
-To update installed packages:
-```bash
-brew update && brew upgrade
-```
-
-### Backup
-Recommended backup practices:
-- Regularly commit and push changes
-- Generate a Brewfile: `brew bundle dump`
-- Document significant changes
-
-## 📝 License
+## License
 
 MIT
-
-
