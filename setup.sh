@@ -155,7 +155,17 @@ setup_git_signing() {
     local key="$HOME/.ssh/id_ed25519"
     local email="$(git -C "$HOME" config user.email)"
 
-    if [ ! -f "$key" ]; then
+    # The public half alone is enough when the private key lives in an agent.
+    if [ ! -f "$key.pub" ]; then
+        # On work machines a key on disk would sign without asking.
+        if [[ $PROFILE == work ]]; then
+            error "Missing $key.pub: create the key in Bitwarden and save its public half there"
+            return
+        fi
+        if [ -f "$key" ]; then
+            error "Missing $key.pub, regenerate it with ssh-keygen -y -f $key"
+            return
+        fi
         log "Generating $key..."
         if ! ssh-keygen -t ed25519 -C "$email" -f "$key"; then
             error "Failed to generate $key"
@@ -165,10 +175,11 @@ setup_git_signing() {
         log "Add $key.pub to GitHub twice: as an authentication key and as a signing key"
     fi
 
-    if [ ! -f "$key.pub" ]; then
-        error "Missing $key.pub, regenerate it with ssh-keygen -y -f $key"
-        return
+    # ssh-keygen falls back to the private key file when the agent lacks the key.
+    if [[ $PROFILE == work && -f $key ]]; then
+        error "$key signs without approval: move the key into Bitwarden and delete the file"
     fi
+
     echo "$email $(cat "$key.pub")" > "$HOME/.config/git/allowed_signers" || error "Failed to write allowed_signers"
 }
 
@@ -233,6 +244,11 @@ setup_symlinks() {
         links+=(
             "personal/zshrc:.zshrc.personal"
             "personal/ssh_config:.ssh/config.personal"
+        )
+    else
+        links+=(
+            "work/zshenv:.zshenv.work"
+            "work/gitconfig:.gitconfig.work"
         )
     fi
 

@@ -55,6 +55,7 @@
 [fetch]
 	prune = true
 
-# Last, so machine-specific settings win.
+# Last, so profile and then machine-specific settings win.
 [include]
+	path = ~/.gitconfig.work
 	path = ~/.gitconfig.local

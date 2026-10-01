@@ -1,0 +1,15 @@
+# Bitwarden's SSH agent holds the GitHub key and asks before every use. Git
+# signs through ssh-keygen, which only reads SSH_AUTH_SOCK and ignores
+# IdentityAgent. Only the launchd default is replaced, so an explicitly chosen
+# agent survives.
+if [[ -z $SSH_AUTH_SOCK || $SSH_AUTH_SOCK == */com.apple.launchd.*/Listeners ]]; then
+    for sock in \
+        "$HOME/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock" \
+        "$HOME/.bitwarden-ssh-agent.sock"; do
+        if [[ -S $sock ]]; then
+            export SSH_AUTH_SOCK=$sock
+            break
+        fi
+    done
+    unset sock
+fi

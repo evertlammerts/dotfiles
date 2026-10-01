@@ -35,3 +35,7 @@ export SCCACHE_CACHE_SIZE="${SCCACHE_CACHE_SIZE:-50G}"
 if [[ -x $HOMEBREW_PREFIX/opt/llvm/bin/llvm-ar && $CMAKE_ARGS != *-DCMAKE_AR=* ]]; then
     export CMAKE_ARGS="${CMAKE_ARGS:+$CMAKE_ARGS }-DCMAKE_AR=$HOMEBREW_PREFIX/opt/llvm/bin/llvm-ar -DCMAKE_RANLIB=$HOMEBREW_PREFIX/opt/llvm/bin/llvm-ranlib"
 fi
+
+if [[ -r ~/.zshenv.work ]]; then
+    source ~/.zshenv.work
+fi
