@@ -1,0 +1,30 @@
+# Huisarchief: a DuckDB session already attached to the house metrics archive.
+#
+# Opens the SSH tunnel first if nothing is listening on 4200 yet, so this works
+# from a cold terminal without remembering to start it. The quack RPC binds
+# 127.0.0.1 on the server and is never exposed on the LAN, so the tunnel is the
+# access path by design.
+#
+# One-time token setup. The `tr -d` matters: ssh -t allocates a TTY, which
+# turns the line ending into CRLF, and a token with a trailing carriage return
+# fails authentication with a message that says nothing about carriage returns.
+#   mkdir -p ~/.config/huisarchief
+#   ssh -t homelab "sudo grep -oP 'HUISARCHIEF_TOKEN=\K.*' /run/secrets/huisarchief/quack-token" \
+#     | tr -d '[:space:]' > ~/.config/huisarchief/token
+#   chmod 600 ~/.config/huisarchief/token
+huisarchief() {
+    local token_file="${HOME}/.config/huisarchief/token"
+    if [[ ! -r $token_file ]]; then
+        echo "huisarchief: no token at $token_file (see comment in ~/.zshrc.local)" >&2
+        return 1
+    fi
+    if ! nc -z 127.0.0.1 4200 2>/dev/null; then
+        echo "huisarchief: opening tunnel to homelab" >&2
+        ssh -fN homelab || return 1
+    fi
+    # Strip whitespace rather than trusting the file: $(<file) drops a trailing
+    # newline but leaves a carriage return, and the resulting failure only says
+    # "Authentication failed".
+    HUISARCHIEF_TOKEN="$(LC_ALL=C tr -d '[:space:]' < "$token_file")" \
+        duckdb -init "${HOME}/.config/huisarchief/init.sql" "$@"
+}
