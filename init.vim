@@ -1,11 +1,6 @@
 call plug#begin()
 
-" Golang
-Plug 'fatih/vim-go'
-Plug 'Shougo/deoplete.nvim'
-Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'majutsushi/tagbar'
-Plug 'SirVer/ultisnips'
 Plug 'fatih/molokai'
 Plug 'tpope/vim-dispatch'
 Plug 'elzr/vim-json', {'for' : 'json'}
@@ -44,7 +39,6 @@ set background=dark
 
 colorscheme molokai
 
-autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4 
 autocmd FileType json setlocal expandtab shiftwidth=2 tabstop=2
 
 " Better split switching
@@ -58,29 +52,5 @@ map <F8> :TagbarToggle<CR>
 inoremap <C-Space> <C-x><C-o>
 inoremap <C-@> <C-Space>
 
-" shortcuts for :GoRun :GoTest :GoCoverageToggle
-autocmd FileType go nmap <leader>r  <Plug>(go-run)
-autocmd FileType go nmap <leader>t  <Plug>(go-test)
-autocmd FileType go nmap <leader>c  <Plug>(go-coverage-toggle)
-" run :GoBuild or :GoTestCompile based on the go file
-function! s:build_go_files()
-  let l:file = expand('%')
-  if l:file =~# '^\f\+_test\.go$'
-    call go#cmd#Test(0, 1)
-  elseif l:file =~# '^\f\+\.go$'
-    call go#cmd#Build(0)
-  endif
-endfunction
-autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
-
 " Tabs!
 set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
-
-" gofmt to goimports
-let g:go_fmt_command = "goimports"
-
-" Python3 !
-let g:python3_host_prog = '~/.config/nvim/venv/neovim/bin/python3'
-
-" deoplete
-let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
