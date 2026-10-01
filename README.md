@@ -17,7 +17,8 @@ cd ~/projects/dotfiles
 ./setup.sh personal    # also homelab hosts, huisarchief and personal packages
 ```
 
-`./setup.sh <profile> links` only creates the symlinks. Setup logs to
+`./setup.sh <profile> links` only links the configuration and sets the iTerm2
+profile, without installing anything. Setup logs to
 `setup.log` next to the script.
 
 The full run:
@@ -63,8 +64,9 @@ The full run:
 ## Maintenance
 
 ```bash
-brew bundle --file=Brewfile          # install what is missing
-brew bundle cleanup --file=Brewfile  # list what is installed but not listed
+brew bundle --file=Brewfile    # install what is missing
+# list what is installed but not listed; add personal/Brewfile on a personal machine
+cat Brewfile | brew bundle cleanup --file=-
 ```
 
 ## License

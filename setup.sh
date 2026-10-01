@@ -4,7 +4,7 @@
 #
 #   work      shared tools and configuration
 #   personal  also the personal Brewfile, homelab hosts and huisarchief
-#   links     only create the symlinks, install nothing
+#   links     only link configuration and set the iTerm2 profile, install nothing
 
 SCRIPT_DIR="$(cd "$(dirname "${(%):-%N}")" && pwd)"
 PROFILE="${1:-}"
@@ -60,7 +60,12 @@ install_packages() {
     fi
 
     # coreutils installs GNU timeout as gtimeout so it does not shadow BSD tools.
-    ln -sf "$(brew --prefix)/bin/gtimeout" "$HOME/.local/bin/timeout" || error "Failed to link timeout"
+    local gtimeout="$(brew --prefix)/bin/gtimeout"
+    if [ -x "$gtimeout" ]; then
+        ln -sf "$gtimeout" "$HOME/.local/bin/timeout" || error "Failed to link timeout"
+    else
+        error "gtimeout not found, is coreutils installed?"
+    fi
 }
 
 install_python() {
@@ -68,7 +73,8 @@ install_python() {
     uv python install 3.12 3.13 || error "Failed to install Python versions"
     # cmake-format (cmakelang) fails under Python 3.14.
     uv python pin --global 3.13 || error "Failed to pin the global Python version"
-    # pre-commit hook environments inherit its interpreter, and they run cmake-format.
+    # pre-commit install bakes this interpreter into git hooks, and its
+    # cmake-format hook crashes under Python 3.14.
     uv tool install --python 3.12 pre-commit || error "Failed to install pre-commit"
     for tool in git-filter-repo rust-just py-spy; do
         uv tool install "$tool" || error "Failed to install $tool"
@@ -146,7 +152,7 @@ setup_neovim() {
 setup_git_signing() {
     log "Setting up SSH commit signing..."
     local key="$HOME/.ssh/id_ed25519"
-    local email="$(git config -f "$SCRIPT_DIR/gitconfig" user.email)"
+    local email="$(git -C "$HOME" config user.email)"
 
     if [ ! -f "$key" ]; then
         log "Generating $key..."
@@ -154,9 +160,14 @@ setup_git_signing() {
             error "Failed to generate $key"
             return
         fi
+        ssh-add --apple-use-keychain "$key" || error "Failed to add $key to ssh-agent and the keychain"
         log "Add $key.pub to GitHub twice: as an authentication key and as a signing key"
     fi
 
+    if [ ! -f "$key.pub" ]; then
+        error "Missing $key.pub, regenerate it with ssh-keygen -y -f $key"
+        return
+    fi
     echo "$email $(cat "$key.pub")" > "$HOME/.config/git/allowed_signers" || error "Failed to write allowed_signers"
 }
 
@@ -178,8 +189,10 @@ setup_macos() {
         fi
 
         # Long builds and test runs otherwise die when the machine idles to sleep.
-        log "Disabling system sleep on power adapter (asks for your password)..."
-        sudo pmset -c sleep 0 || error "Failed to disable system sleep on power adapter"
+        if [[ $(pmset -g custom | awk '/^AC Power/ {ac = 1} ac && $1 == "sleep" {print $2; exit}') != 0 ]]; then
+            log "Disabling system sleep on power adapter (asks for your password)..."
+            sudo pmset -c sleep 0 || error "Failed to disable system sleep on power adapter"
+        fi
 
         for dir in "$HOME/.cache" "$HOME/.ccache"; do
             if [ -d "$dir" ]; then
@@ -254,13 +267,9 @@ setup_symlinks() {
         fi
     done
 
-    # Report any failures
-    if [ ${#failed_links[@]} -gt 0 ]; then
-        log "WARNING: Failed to create the following symlinks:"
-        for dst in "${failed_links[@]}"; do
-            log "  - $dst"
-        done
-    fi
+    for dst in "${failed_links[@]}"; do
+        error "Failed to link $dst"
+    done
 }
 
 main() {
