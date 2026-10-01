@@ -17,7 +17,7 @@ alias vim='nvim'
 # Map vi to neovim as well
 alias vi='nvim'
 # Open Visual Studio Code from terminal
-alias code='open -a Visual\ Studio\ Code'
+(( $+commands[code] )) || alias code='open -a Visual\ Studio\ Code'
 
 # Data processing
 # Pretty print JSON with colors
