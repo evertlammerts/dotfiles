@@ -4,7 +4,8 @@
 #
 #   work      shared tools and configuration
 #   personal  also the personal Brewfile, homelab hosts and huisarchief
-#   links     only link configuration and set the iTerm2 profile, install nothing
+#   links     only link configuration, set the iTerm2 profile and set up commit
+#             signing, install nothing
 
 SCRIPT_DIR="$(cd "$(dirname "${(%):-%N}")" && pwd)"
 PROFILE="${1:-}"
@@ -219,6 +220,7 @@ setup_symlinks() {
     local links=(
         "init.vim:.config/nvim/init.vim"
         "zshenv:.zshenv"
+        "zprofile:.zprofile"
         "zshrc:.zshrc"
         "aliases:.aliases"
         "gitconfig:.gitconfig"
@@ -229,8 +231,8 @@ setup_symlinks() {
     )
     if [[ $PROFILE == personal ]]; then
         links+=(
-            "personal/zshrc:.zshrc.local"
-            "personal/ssh_config:.ssh/config.local"
+            "personal/zshrc:.zshrc.personal"
+            "personal/ssh_config:.ssh/config.personal"
         )
     fi
 
@@ -242,10 +244,13 @@ setup_symlinks() {
         local target="$HOME/$dst"
         local source_file="$SCRIPT_DIR/$src"
 
-        # Skip if symlink already exists
         if [ -L "$target" ]; then
-            log "Symlink for $dst already exists, skipping..."
-            continue
+            if [[ $(readlink "$target") == "$source_file" ]]; then
+                log "Symlink for $dst already exists, skipping..."
+                continue
+            fi
+            log "Replacing $dst, which links to $(readlink "$target")..."
+            rm "$target"
         fi
 
         # Backup existing file if it's not a symlink
@@ -284,9 +289,9 @@ main() {
     fi
     setup_symlinks
     setup_iterm2
+    setup_git_signing
     if [[ $STEP == all ]]; then
         setup_neovim
-        setup_git_signing
         setup_macos
     fi
 

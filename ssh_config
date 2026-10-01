@@ -1,6 +1,6 @@
-# Machine-specific hosts. Include must come before any Host block, and ssh
-# skips it silently when the file does not exist.
-Include ~/.ssh/config.local
+# Machine-specific and personal hosts. Include must come before any Host block,
+# and ssh skips a file that does not exist.
+Include ~/.ssh/config.local ~/.ssh/config.personal
 
 # Global settings
 Host *

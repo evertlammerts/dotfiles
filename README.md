@@ -17,8 +17,8 @@ cd ~/projects/dotfiles
 ./setup.sh personal    # also homelab hosts, huisarchief and personal packages
 ```
 
-`./setup.sh <profile> links` only links the configuration and sets the iTerm2
-profile, without installing anything. Setup logs to
+`./setup.sh <profile> links` only links the configuration, sets the iTerm2
+profile and sets up commit signing, without installing anything. Setup logs to
 `setup.log` next to the script.
 
 The full run:
@@ -42,31 +42,34 @@ The full run:
 - Add `~/projects` to System Settings, Spotlight, Search Privacy so builds do
   not trigger indexing.
 - Put machine-specific settings in `~/.zshrc.local`, `~/.gitconfig.local` or
-  `~/.ssh/config.local`. The personal profile links its own files there.
+  `~/.ssh/config.local`, which stay untracked. The personal profile links its
+  files to `~/.zshrc.personal` and `~/.ssh/config.personal` instead.
 
 ## Layout
 
 | File | Linked to | Notes |
 |---|---|---|
 | `zshenv` | `~/.zshenv` | PATH and environment for every zsh, including non-interactive shells |
+| `zprofile` | `~/.zprofile` | Restores the PATH order after macOS path_helper in login shells |
 | `zshrc` | `~/.zshrc` | Interactive shell: Oh My Zsh, history, completion, prompt |
 | `aliases` | `~/.aliases` | Aliases never shadow a standard command |
 | `gitconfig` | `~/.gitconfig` | Includes `~/.gitconfig.local` last |
 | `gitignore_global` | `~/.gitignore_global` | |
 | `gitattributes` | `~/.gitattributes` | |
-| `ssh_config` | `~/.ssh/config` | Includes `~/.ssh/config.local` first |
+| `ssh_config` | `~/.ssh/config` | Includes `~/.ssh/config.local` and `~/.ssh/config.personal` first |
 | `tmux.conf` | `~/.tmux.conf` | |
 | `init.vim` | `~/.config/nvim/init.vim` | |
 | `iterm2/dotfiles_profile.json` | iTerm2 `DynamicProfiles` | |
-| `personal/zshrc` | `~/.zshrc.local` | Personal profile only |
-| `personal/ssh_config` | `~/.ssh/config.local` | Personal profile only |
+| `personal/zshrc` | `~/.zshrc.personal` | Personal profile only |
+| `personal/ssh_config` | `~/.ssh/config.personal` | Personal profile only |
 
 ## Maintenance
 
 ```bash
 brew bundle --file=Brewfile    # install what is missing
-# list what is installed but not listed; add personal/Brewfile on a personal machine
+# list what is installed but not listed (work, then personal)
 cat Brewfile | brew bundle cleanup --file=-
+cat Brewfile personal/Brewfile | brew bundle cleanup --file=-
 ```
 
 ## License

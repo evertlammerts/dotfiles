@@ -15,7 +15,7 @@
 huisarchief() {
     local token_file="${HOME}/.config/huisarchief/token"
     if [[ ! -r $token_file ]]; then
-        echo "huisarchief: no token at $token_file (see comment in ~/.zshrc.local)" >&2
+        echo "huisarchief: no token at $token_file (see comment in ~/.zshrc.personal)" >&2
         return 1
     fi
     if ! nc -z 127.0.0.1 4200 2>/dev/null; then
