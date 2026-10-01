@@ -46,7 +46,6 @@ setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_SAVE_NO_DUPS
 
 # Less configuration
-# Less configuration
 export LESS="--raw-control-chars --ignore-case --status-column"
 export LESSHISTFILE="-"
 
@@ -75,6 +74,9 @@ function listen() { sudo lsof -iTCP -sTCP:LISTEN -P }
 # Load aliases
 test -s "${HOME}/.aliases" && . "${HOME}/.aliases" || true
 
+# set higher fdlimit
+ulimit -n 8192
+
 # Completions configuration
 autoload -Uz compinit
 compinit
@@ -94,3 +96,4 @@ source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
+

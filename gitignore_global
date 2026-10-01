@@ -4,3 +4,5 @@
 uv.lock
 .envrc
 .claude
+CLAUDE.local.md
+.ipynb_checkpoints
