@@ -70,13 +70,11 @@ zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
 
-# Commit signing needs the key in macOS's ssh-agent, which stays empty after
-# login until the first ssh connection loads it from the keychain. Other
-# agents hold their own keys, and Bitwarden's may prompt even for a listing.
-if [[ $SSH_AUTH_SOCK == */com.apple.launchd.*/Listeners && -r ~/.ssh/id_ed25519.pub ]]; then
-    signing_key=(${=$(<~/.ssh/id_ed25519.pub)})
-    [[ $(ssh-add -L 2>/dev/null) == *${signing_key[2]}* ]] || ssh-add --apple-load-keychain -q 2>/dev/null
-    unset signing_key
+# Commit signing needs the key in ssh-agent. macOS's agent stays empty after
+# login until the first ssh connection loads it from the keychain; other
+# agents, such as Bitwarden's, hold their own keys and would prompt here.
+if [[ $SSH_AUTH_SOCK == */com.apple.launchd.*/Listeners ]]; then
+    ssh-add -T ~/.ssh/id_ed25519.pub >/dev/null 2>&1 || ssh-add --apple-load-keychain -q 2>/dev/null
 fi
 
 # Load the personal profile, then machine-specific configuration
