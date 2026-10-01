@@ -5,7 +5,7 @@ Include ~/.ssh/config.local ~/.ssh/config.personal
 # GitHub. Before Host * because the first value set wins. No connection
 # sharing, so an approving agent sees every push instead of only the first one
 # in each ControlPersist window.
-Host github.com
+Host github.com ssh.github.com gist.github.com
     User git
     IdentityFile ~/.ssh/id_ed25519
     IdentitiesOnly yes
