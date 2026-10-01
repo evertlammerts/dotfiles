@@ -1,7 +1,6 @@
 .venv
 .idea
 .secrets
-uv.lock
 .envrc
 .claude
 CLAUDE.local.md
