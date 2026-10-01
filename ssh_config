@@ -2,6 +2,16 @@
 # and ssh skips a file that does not exist.
 Include ~/.ssh/config.local ~/.ssh/config.personal
 
+# GitHub. Before Host * because the first value set wins. No connection
+# sharing, so an approving agent sees every push instead of only the first one
+# in each ControlPersist window.
+Host github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    ControlMaster no
+    ControlPath none
+
 # Global settings
 Host *
     AddKeysToAgent yes
@@ -13,9 +23,3 @@ Host *
     ControlMaster auto
     ControlPath ~/.ssh/control/%C
     ControlPersist 10m
-
-# GitHub
-Host github.com
-    User git
-    IdentityFile ~/.ssh/id_ed25519
-    IdentitiesOnly yes
