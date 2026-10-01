@@ -1,18 +1,13 @@
+# Never alias a standard command to a tool that takes different flags: agent
+# shells load these aliases too.
+
 # Modern CLI replacements
-# Modern replacement for ls with icons and colors
-alias ls='lsd'
 # List all files in long format with icons
 alias ll='lsd -la'
 # Show directory structure as a tree with icons
 alias lt='lsd --tree'
-# Alias tree to lsd tree view for consistency
-alias tree='lsd --tree'
 
 # File viewing
-# Modern replacement for cat with syntax highlighting
-alias cat='bat --paging=never'
-# Enhanced pager with syntax highlighting
-alias less='bat --style=plain --paging=always'
 # Preview files with line numbers and Git changes
 alias preview='bat --style=numbers,changes'
 
@@ -23,12 +18,6 @@ alias vim='nvim'
 alias vi='nvim'
 # Open Visual Studio Code from terminal
 alias code='open -a Visual\ Studio\ Code'
-
-# Search and find
-# Use ripgrep with smart case sensitivity
-alias grep='rg --smart-case'
-# Modern find replacement that respects gitignore
-alias find='fd --hidden --follow --exclude .git'
 
 # Data processing
 # Pretty print JSON with colors
@@ -80,16 +69,12 @@ yamlf() {
 alias csvt='xsv table'
 
 # Disk usage
-# Modern disk usage utility with better UI
-alias df='duf'
 # Interactive disk usage analyzer
 alias disk='ncdu --color dark'
 # Show disk usage sorted by size
 alias space='duf --sort size'
 
 # System monitoring
-# Modern system monitor with detailed stats
-alias top='btop'
 # Simplified man pages with practical examples
 alias help='tldr'
 
@@ -101,8 +86,6 @@ alias https='http --default-scheme=https'
 # Traceroute with real-time updates
 # Traceroute with real-time updates
 alias trace='sudo mtr --show-ips --curses'
-# Monitor network traffic in real-time (all interfaces)
-alias nettop='sudo bandwhich'
 alias tracet='sudo mtr --show-ips --curses --tcp'
 # Monitor network bandwidth usage
 alias netmon='sudo bandwhich'
