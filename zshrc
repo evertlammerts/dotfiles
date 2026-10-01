@@ -1,8 +1,6 @@
-# Path to Oh My Zsh installation
-
-# Set up locale
-export LANG="en_US.UTF-8"
-export LC_ALL="en_US.UTF-8"
+# macOS path_helper in /etc/zprofile reorders PATH for login shells after
+# ~/.zshenv ran, so apply it again.
+source "${HOME}/.zshenv"
 
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -12,12 +10,9 @@ ZSH_THEME=""
 # Oh My Zsh plugins
 plugins=(
     git
-    docker
     python
-    pip
     macos
     brew
-    kubectl
     history
     dirhistory
     z
@@ -28,9 +23,6 @@ plugins=(
 # Load Oh My Zsh
 source $ZSH/oh-my-zsh.sh
 
-# Editor configuration
-export EDITOR="`which nvim`"
-
 # Tool-specific configurations
 export BAT_THEME="Dracula"
 export JQ_COLORS="1;31:0;37:0;37:0;37:0;32:1;37:1;37"
@@ -39,19 +31,15 @@ export TLDR_CACHE_ENABLED=1
 export TLDR_CACHE_MAX_AGE=720
 
 # History settings
-export HISTSIZE=10000
-export HISTFILESIZE=10000
-export HISTCONTROL=erasedups
+HISTFILE="${HOME}/.zsh_history"
+HISTSIZE=1000000
+SAVEHIST=1000000
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_SAVE_NO_DUPS
 
 # Less configuration
 export LESS="--raw-control-chars --ignore-case --status-column"
 export LESSHISTFILE="-"
-
-# Path configurations
-export PATH="$PATH:/Users/evert/.cache/lm-studio/bin"
-export PATH="$HOME/.local/bin:$PATH"
 
 # FZF Configuration
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -74,9 +62,6 @@ function listen() { sudo lsof -iTCP -sTCP:LISTEN -P }
 # Load aliases
 test -s "${HOME}/.aliases" && . "${HOME}/.aliases" || true
 
-# set higher fdlimit
-ulimit -n 8192
-
 # Completions configuration
 autoload -Uz compinit
 compinit
@@ -90,10 +75,10 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 # Load machine-specific configurations
 test -s "${HOME}/.zshrc.local" && . "${HOME}/.zshrc.local" || true
 
-# Initialize Starship prompt
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
 
+eval "$(direnv hook zsh)"

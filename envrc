@@ -1,3 +1,0 @@
-PATH_add "$HOME/.duckdb/cli/latest"
-PATH_add "/opt/homebrew/opt/curl/bin"
-export GPG_TTY=$(tty)
