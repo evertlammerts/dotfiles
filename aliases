@@ -25,7 +25,7 @@ alias json='jq -C'
 # Pretty print YAML with colors
 alias yaml='yq -C'
 # CSV file manipulation tool
-alias csv='xsv'
+alias csv='qsv'
 # Pretty print and page through JSON files with colors
 # Usage: jsonf [file] [jq filter] OR cat file.json | jsonf [jq filter]
 unalias jsonf 2>/dev/null || true
@@ -66,7 +66,7 @@ yamlf() {
     fi
 }
 # Display CSV files in table format
-alias csvt='xsv table'
+alias csvt='qsv table'
 
 # Disk usage
 # Interactive disk usage analyzer

@@ -34,8 +34,8 @@ brew "lsd"
 brew "jq"
 brew "yq"
 brew "xq"
-brew "xsv"
-brew "tldr"
+brew "qsv"
+brew "tlrc"
 brew "gnuplot"
 
 # System and disk

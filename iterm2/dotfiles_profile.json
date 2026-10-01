@@ -1,10 +1,11 @@
 {
-  "Profiles" : [
+  "Profiles": [
     {
-      "Use Separate Colors for Light and Dark Mode" : true,
-      "Name" : "Dotfiles Profile",
-      "Rewritable" : true,
-      "Guid" : "A25C8F13-3C80-4F3D-9947-ED85BCCFF34F"
+      "Use Separate Colors for Light and Dark Mode": true,
+      "Name": "Dotfiles Profile",
+      "Rewritable": true,
+      "Guid": "A25C8F13-3C80-4F3D-9947-ED85BCCFF34F",
+      "Normal Font": "JetBrainsMonoNFM-Regular 16"
     }
   ]
 }
