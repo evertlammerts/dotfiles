@@ -1,0 +1,4 @@
+# This machine keeps the personal knowledge base next to the work one, and
+# recall searches both.
+export RECALL_MEMOS="${RECALL_MEMOS:-$HOME/projects/memos:$HOME/projects/memos-personal}"
+export RECALL_NOTES="${RECALL_NOTES:-$HOME/projects/agent-notes:$HOME/projects/agent-notes-personal}"

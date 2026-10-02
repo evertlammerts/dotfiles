@@ -39,3 +39,6 @@ fi
 if [[ -r ~/.zshenv.work ]]; then
     source ~/.zshenv.work
 fi
+if [[ -r ~/.zshenv.personal ]]; then
+    source ~/.zshenv.personal
+fi

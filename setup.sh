@@ -3,7 +3,8 @@
 # Usage: ./setup.sh work|personal [links]
 #
 #   work      shared tools and configuration, with the GitHub key in Bitwarden
-#   personal  also the personal Brewfile, homelab hosts and huisarchief
+#   personal  also the personal Brewfile, homelab hosts, huisarchief and the
+#             personal knowledge base in recall
 #   links     only link configuration, set the iTerm2 profile and set up commit
 #             signing, install nothing
 
@@ -242,6 +243,7 @@ setup_symlinks() {
     )
     if [[ $PROFILE == personal ]]; then
         links+=(
+            "personal/zshenv:.zshenv.personal"
             "personal/zshrc:.zshrc.personal"
             "personal/ssh_config:.ssh/config.personal"
         )

@@ -78,7 +78,8 @@ bypass it.
   not trigger indexing.
 - Put machine-specific settings in `~/.zshrc.local`, `~/.gitconfig.local` or
   `~/.ssh/config.local`, which stay untracked. The personal profile links its
-  files to `~/.zshrc.personal` and `~/.ssh/config.personal` instead.
+  files to `~/.zshenv.personal`, `~/.zshrc.personal` and
+  `~/.ssh/config.personal` instead.
 
 ## Layout
 
@@ -95,6 +96,7 @@ bypass it.
 | `tmux.conf` | `~/.tmux.conf` | |
 | `init.vim` | `~/.config/nvim/init.vim` | |
 | `iterm2/dotfiles_profile.json` | iTerm2 `DynamicProfiles` | |
+| `personal/zshenv` | `~/.zshenv.personal` | Personal profile only: recall searches the personal knowledge base too |
 | `personal/zshrc` | `~/.zshrc.personal` | Personal profile only |
 | `personal/ssh_config` | `~/.ssh/config.personal` | Personal profile only |
 | `work/zshenv` | `~/.zshenv.work` | Work profile only: Bitwarden SSH agent |
