@@ -28,6 +28,8 @@ unset fdlimit
 # The 10G default is smaller than one debug build per active DuckDB worktree,
 # so worktrees on different commits evict each other's objects.
 export SCCACHE_CACHE_SIZE="${SCCACHE_CACHE_SIZE:-50G}"
+export CMAKE_C_COMPILER_LAUNCHER="sccache"
+export CMAKE_CXX_COMPILER_LAUNCHER="sccache"
 
 # Apple's ar only writes 32 bit archives and aborts once a debug
 # libduckdb_static.a passes 4GB. scikit-build reads CMAKE_ARGS; the core

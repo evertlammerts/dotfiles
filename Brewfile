@@ -24,6 +24,9 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 brew "direnv"
 brew "tmux"
+brew "herdr"
+tap "mutagen-io/mutagen"
+brew "mutagen-io/mutagen/mutagen"
 brew "neovim"
 
 # Search, viewing and data
@@ -59,6 +62,7 @@ brew "lima"
 brew "awscli"
 
 cask "font-jetbrains-mono-nerd-font"
+cask "ghostty"
 cask "iterm2"
 cask "jetbrains-toolbox"
 cask "visual-studio-code"

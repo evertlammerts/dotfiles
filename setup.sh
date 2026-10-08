@@ -239,6 +239,7 @@ setup_symlinks() {
         "gitattributes:.gitattributes"
         "gitignore_global:.gitignore_global"
         "tmux.conf:.tmux.conf"
+        "ghostty_config:.config/ghostty/config"
         "ssh_config:.ssh/config"
     )
     if [[ $PROFILE == personal ]]; then
@@ -282,6 +283,7 @@ setup_symlinks() {
         fi
 
         # Create symlink
+        mkdir -p "${target:h}"
         if ! ln -s "$source_file" "$target"; then
             log "WARNING: Failed to create symlink for $dst"
             failed_links+=("$dst")
