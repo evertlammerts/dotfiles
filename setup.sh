@@ -39,6 +39,7 @@ setup_directories() {
              "$HOME/.local/share/nvim/site/autoload" \
              "$HOME/.local/bin" \
              "$HOME/.config/git" \
+             "$HOME/.config/ghostty" \
              "$HOME/.ssh/control" \
              "$HOME/Library/Application Support/iTerm2/DynamicProfiles"
     chmod 700 "$HOME/.ssh" "$HOME/.ssh/control" || error "Failed to set permissions on ~/.ssh directories"
@@ -56,6 +57,11 @@ install_homebrew() {
 
 install_packages() {
     log "Installing Homebrew packages..."
+    # The mutagen formula names both of these in conflicts_with, and Homebrew
+    # refuses to evaluate a formula from an untrusted tap.
+    brew tap mutagen-io/mutagen \
+        && brew trust --formula mutagen-io/mutagen/mutagen-beta mutagen-io/mutagen/mutagen-edge \
+        || error "Failed to trust the mutagen tap's conflicting formulae"
     brew bundle --file="$SCRIPT_DIR/Brewfile" || error "brew bundle failed for Brewfile"
     if [[ $PROFILE == personal ]]; then
         brew bundle --file="$SCRIPT_DIR/personal/Brewfile" || error "brew bundle failed for personal/Brewfile"
@@ -68,6 +74,9 @@ install_packages() {
     else
         error "gtimeout not found, is coreutils installed?"
     fi
+
+    herdr integration install claude >/dev/null || error "Failed to install herdr's Claude Code integration"
+    mutagen daemon register || error "Failed to register the Mutagen daemon"
 }
 
 install_python() {
@@ -283,7 +292,6 @@ setup_symlinks() {
         fi
 
         # Create symlink
-        mkdir -p "${target:h}"
         if ! ln -s "$source_file" "$target"; then
             log "WARNING: Failed to create symlink for $dst"
             failed_links+=("$dst")

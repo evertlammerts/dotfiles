@@ -25,7 +25,6 @@ brew "zsh-syntax-highlighting"
 brew "direnv"
 brew "tmux"
 brew "herdr"
-tap "mutagen-io/mutagen"
 brew "mutagen-io/mutagen/mutagen"
 brew "neovim"
 
