@@ -1,4 +1,5 @@
-export LC_ALL="en_US.UTF-8"
+# On Linux, glibc's en_US collation would change sort and glob order for every agent.
+[[ $OSTYPE == darwin* ]] && export LC_ALL="en_US.UTF-8"
 
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -46,8 +47,6 @@ export FZF_DEFAULT_COMMAND='fd --type f --follow --hidden --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type d --hidden --follow --exclude .git"
 export FZF_ALT_C_OPTS="--preview 'lsd --tree {} | head -50'"
-bindkey '^T' fzf-file-widget
-bindkey '^R' fzf-history-widget
 
 # JSON/YAML/CSV functions
 function jsonview() { cat "$1" | jq -C '.' | less -R }
@@ -81,10 +80,13 @@ fi
 test -s "${HOME}/.zshrc.personal" && . "${HOME}/.zshrc.personal" || true
 test -s "${HOME}/.zshrc.local" && . "${HOME}/.zshrc.local" || true
 
-source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# Hosts without Homebrew keep these plugins in ~/.local/share.
+source ${HOMEBREW_PREFIX:-$HOME/.local}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ${HOMEBREW_PREFIX:-$HOME/.local}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"
 
-eval "$(direnv hook zsh)"
+if (( $+commands[direnv] )); then
+    eval "$(direnv hook zsh)"
+fi
